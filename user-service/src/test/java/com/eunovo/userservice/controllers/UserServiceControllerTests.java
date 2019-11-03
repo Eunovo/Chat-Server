@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,6 @@ public class UserServiceControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String SUCCESS_MESSAGE = "SUCCESS";
-
     @Test
     public void shouldReturnDefaultMessage() throws Exception {
         this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("Working"));
@@ -49,5 +48,16 @@ public class UserServiceControllerTests {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
     }
-    
+
+    @Disabled("TODO") @Test
+    public void shouldRejectInvalidUser() {}
+
+    @Disabled("TODO") @Test
+    public void shouldRejectUserWithUsedUsernames() {}
+
+    @Disabled("TODO") @Test
+    public void shouldGetAllUsers() {}
+
+    @Disabled("TODO") @Test
+    public void shouldGetUserById() {}
 }
