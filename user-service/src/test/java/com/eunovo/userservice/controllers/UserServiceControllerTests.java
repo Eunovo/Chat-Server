@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,7 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.eunovo.userservice.models.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserServiceControllerTests {
 
     @Autowired
@@ -32,7 +34,7 @@ public class UserServiceControllerTests {
 
     @Test
     public void shouldReturnDefaultMessage() throws Exception {
-        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("Working"));
+        this.mockMvc.perform(get("/test")).andExpect(status().isOk()).andExpect(content().string("Working"));
     }
 
     @Test
@@ -43,21 +45,36 @@ public class UserServiceControllerTests {
         ApiResponse expectedResponse = ApiResponse.success("User created", new UserResponse("Novo"));
         RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody));
-        this.mockMvc.perform(request).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+        List<UserResponse> userList = new ArrayList();
+        userList.add(new UserResponse("Novo"));
+        ApiResponse expectedUsers = ApiResponse.success("All users", userList);
+
+        this.mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+
+        this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
     }
 
-    @Disabled("TODO") @Test
-    public void shouldRejectInvalidUser() {}
+    @Disabled("TODO")
+    @Test
+    public void shouldRejectInvalidUser() {
+    }
 
-    @Disabled("TODO") @Test
-    public void shouldRejectUserWithUsedUsernames() {}
+    @Disabled("TODO")
+    @Test
+    public void shouldRejectUserWithUsedUsernames() {
+    }
 
-    @Disabled("TODO") @Test
-    public void shouldGetAllUsers() {}
+    @Disabled("TODO")
+    @Test
+    public void shouldGetAllUsers() {
+    }
 
-    @Disabled("TODO") @Test
-    public void shouldGetUserById() {}
+    @Disabled("TODO")
+    @Test
+    public void shouldGetUserById() {
+    }
 }
