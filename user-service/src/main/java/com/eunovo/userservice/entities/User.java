@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,10 +17,10 @@ public class User implements Serializable{
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String username;
 
-    @Column(nullable = false)
+    @NotNull
     private String password;
 
     @CreationTimestamp
