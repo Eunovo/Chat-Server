@@ -5,8 +5,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 import com.eunovo.userservice.entities.User;
 import com.eunovo.userservice.models.*;
@@ -37,5 +39,14 @@ public class AddUserServiceTests {
         assertEquals(savedUser.getPassword(), newUser.getPassword());
         User result = this.findUserSerivce.findByUsername(newUser.getUsername());
         assertEquals(savedUser, result);
+    }
+
+    @Test
+    public void shouldRejectUserWithExistingUsername() {
+        SignupUser newUserNovo = new SignupUser("Novo", "password");
+        this.addUserService.addUser(newUserNovo.toUserEntity());
+        SignupUser newUserNovoDuplicate = new SignupUser("Novo", "password");
+        assertThrows(DataIntegrityViolationException.class,
+                () -> this.addUserService.addUser(newUserNovoDuplicate.toUserEntity()));
     }
 }
