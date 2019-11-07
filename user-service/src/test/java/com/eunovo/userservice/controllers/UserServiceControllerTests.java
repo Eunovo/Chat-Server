@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.eunovo.userservice.models.*;
+import com.eunovo.userservice.repositories.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -31,6 +31,13 @@ public class UserServiceControllerTests {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private UserRepository userRepo;
+
+    @BeforeEach
+    public void wipeDatabase() {
+        userRepo.deleteAll();
+    }
 
     @Test
     public void shouldReturnDefaultMessage() throws Exception {
@@ -58,9 +65,25 @@ public class UserServiceControllerTests {
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
     }
 
-    @Disabled("TODO")
     @Test
-    public void shouldRejectInvalidUser() {
+    public void shouldRejectInvalidUser() throws Exception {
+        Map<String, String> requestBody = new HashMap<String, String>();
+        requestBody.put("username", "Novo");
+        List<ApiError> errorsList = new ArrayList();
+        errorsList.add(new ApiValidationError("User", "password", null, "must not be null"));
+        ApiResponse expectedResponse = ApiResponse.error("Validation error", errorsList);
+        RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBody));
+        List<UserResponse> userList = new ArrayList();
+        ApiResponse expectedUsers = ApiResponse.success("All users", userList);
+
+        this.mockMvc.perform(request).andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+
+        this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
     }
 
     @Disabled("TODO")
