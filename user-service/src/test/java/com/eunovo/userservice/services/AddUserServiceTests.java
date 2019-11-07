@@ -19,6 +19,9 @@ public class AddUserServiceTests {
     private AddUserService addUserService;
 
     @Autowired
+    private FindUserService findUserSerivce;
+
+    @Autowired
     private UserRepository userRepo;
 
     @BeforeEach
@@ -32,5 +35,7 @@ public class AddUserServiceTests {
         User savedUser = this.addUserService.addUser(newUser.toUserEntity());
         assertEquals(savedUser.getUsername(), newUser.getUsername());
         assertEquals(savedUser.getPassword(), newUser.getPassword());
+        User result = this.findUserSerivce.findByUsername(newUser.getUsername());
+        assertEquals(savedUser, result);
     }
 }
