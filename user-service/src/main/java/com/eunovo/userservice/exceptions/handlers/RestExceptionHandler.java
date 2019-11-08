@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -16,6 +17,7 @@ import javax.validation.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.eunovo.userservice.exceptions.IllegalParameterException;
 import com.eunovo.userservice.models.*;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -51,6 +53,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             field = lastNode.toString();
         }
         return field;
+    }
+
+    @ExceptionHandler(IllegalParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ApiResponse handleIllegalParameter(IllegalParameterException ex) {
+        List<ApiError> errors = new ArrayList();
+        errors.add(
+                new ApiValidationError(ex.getResource(), ex.getField(), ex.getRejectedValue(), ex.getMessage()));
+        return ApiResponse.error("Illegal parameter", errors);
     }
 
     private ResponseEntity<ApiResponse> buildResponseEntity(ApiResponse apiRepsonse, HttpStatus status) {
