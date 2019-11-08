@@ -86,9 +86,30 @@ public class UserServiceControllerTests {
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
     }
 
-    @Disabled("TODO")
     @Test
-    public void shouldRejectUserWithUsedUsernames() {
+    public void shouldRejectUserWithUsedUsernames() throws Exception {
+        Map<String, String> requestBody = new HashMap<String, String>();
+        requestBody.put("username", "Novo");
+        requestBody.put("password", "password");
+        List<ApiError> errorsList = new ArrayList();
+        errorsList.add(new ApiValidationError("User", "username", "Novo", "already in use"));
+        ApiResponse expectedResponse = ApiResponse.error("Illegal parameter", errorsList);
+        RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBody));
+
+        List<UserResponse> userList = new ArrayList();
+        userList.add(new UserResponse("Novo"));
+        ApiResponse expectedUsers = ApiResponse.success("All users", userList);
+
+        this.mockMvc.perform(request).andExpect(status().isOk());
+
+        this.mockMvc.perform(request).andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+
+        this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
     }
 
     @Disabled("TODO")
