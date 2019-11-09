@@ -17,7 +17,7 @@ import javax.validation.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.eunovo.userservice.exceptions.IllegalParameterException;
+import com.eunovo.userservice.exceptions.*;
 import com.eunovo.userservice.models.*;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -63,6 +63,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 new ApiValidationError(ex.getResource(), ex.getField(), ex.getRejectedValue(), ex.getMessage()));
         return ApiResponse.error("Illegal parameter", errors);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected ApiResponse handleResourceNotFoundException(ResourceNotFoundException ex) {
+        List<ApiError> errors = new ArrayList();
+        return ApiResponse.error(ex.getMessage(), errors);
+    }
+
 
     private ResponseEntity<ApiResponse> buildResponseEntity(ApiResponse apiRepsonse, HttpStatus status) {
         return new ResponseEntity<>(apiRepsonse, status);
