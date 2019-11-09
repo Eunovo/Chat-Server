@@ -27,98 +27,115 @@ import com.eunovo.userservice.repositories.UserRepository;
 @AutoConfigureMockMvc
 public class UserServiceControllerTests {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private UserRepository userRepo;
+        @Autowired
+        private MockMvc mockMvc;
+        @Autowired
+        private ObjectMapper objectMapper;
+        @Autowired
+        private UserRepository userRepo;
 
-    @BeforeEach
-    public void wipeDatabase() {
-        userRepo.deleteAll();
-    }
+        @BeforeEach
+        public void wipeDatabase() {
+                userRepo.deleteAll();
+        }
 
-    @Test
-    public void shouldReturnDefaultMessage() throws Exception {
-        this.mockMvc.perform(get("/test")).andExpect(status().isOk()).andExpect(content().string("Working"));
-    }
+        @Test
+        public void shouldReturnDefaultMessage() throws Exception {
+                this.mockMvc.perform(get("/test")).andExpect(status().isOk()).andExpect(content().string("Working"));
+        }
 
-    @Test
-    public void shouldAddUser() throws Exception {
-        Map<String, String> requestBody = new HashMap<String, String>();
-        requestBody.put("username", "Novo");
-        requestBody.put("password", "password");
-        ApiResponse expectedResponse = ApiResponse.success("User created", new UserResponse("Novo"));
-        RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBody));
-        List<UserResponse> userList = new ArrayList();
-        userList.add(new UserResponse("Novo"));
-        ApiResponse expectedUsers = ApiResponse.success("All users", userList);
+        @Test
+        public void shouldAddUser() throws Exception {
+                Map<String, String> requestBody = new HashMap<String, String>();
+                requestBody.put("username", "Novo");
+                requestBody.put("password", "password");
+                ApiResponse expectedResponse = ApiResponse.success("User created", new UserResponse("Novo"));
+                RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody));
+                List<UserResponse> userList = new ArrayList();
+                userList.add(new UserResponse("Novo"));
+                ApiResponse expectedUsers = ApiResponse.success("All users", userList);
 
-        this.mockMvc.perform(request).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+                this.mockMvc.perform(request).andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
-        this.mockMvc.perform(get("/")).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
-    }
+                this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
+        }
 
-    @Test
-    public void shouldRejectInvalidUser() throws Exception {
-        Map<String, String> requestBody = new HashMap<String, String>();
-        requestBody.put("username", "Novo");
-        List<ApiError> errorsList = new ArrayList();
-        errorsList.add(new ApiValidationError("User", "password", null, "must not be null"));
-        ApiResponse expectedResponse = ApiResponse.error("Validation error", errorsList);
-        RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBody));
-        List<UserResponse> userList = new ArrayList();
-        ApiResponse expectedUsers = ApiResponse.success("All users", userList);
+        @Test
+        public void shouldRejectInvalidUser() throws Exception {
+                Map<String, String> requestBody = new HashMap<String, String>();
+                requestBody.put("username", "Novo");
+                List<ApiError> errorsList = new ArrayList();
+                errorsList.add(new ApiValidationError("User", "password", null, "must not be null"));
+                ApiResponse expectedResponse = ApiResponse.error("Validation error", errorsList);
+                RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody));
+                List<UserResponse> userList = new ArrayList();
+                ApiResponse expectedUsers = ApiResponse.success("All users", userList);
 
-        this.mockMvc.perform(request).andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+                this.mockMvc.perform(request).andExpect(status().isBadRequest())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
-        this.mockMvc.perform(get("/")).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
-    }
+                this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
+        }
 
-    @Test
-    public void shouldRejectUserWithUsedUsernames() throws Exception {
-        Map<String, String> requestBody = new HashMap<String, String>();
-        requestBody.put("username", "Novo");
-        requestBody.put("password", "password");
-        List<ApiError> errorsList = new ArrayList();
-        errorsList.add(new ApiValidationError("User", "username", "Novo", "already in use"));
-        ApiResponse expectedResponse = ApiResponse.error("Illegal parameter", errorsList);
-        RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBody));
+        @Test
+        public void shouldRejectUserWithUsedUsernames() throws Exception {
+                Map<String, String> requestBody = new HashMap<String, String>();
+                requestBody.put("username", "Novo");
+                requestBody.put("password", "password");
+                List<ApiError> errorsList = new ArrayList();
+                errorsList.add(new ApiValidationError("User", "username", "Novo", "already in use"));
+                ApiResponse expectedResponse = ApiResponse.error("Illegal parameter", errorsList);
+                RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody));
 
-        List<UserResponse> userList = new ArrayList();
-        userList.add(new UserResponse("Novo"));
-        ApiResponse expectedUsers = ApiResponse.success("All users", userList);
+                List<UserResponse> userList = new ArrayList();
+                userList.add(new UserResponse("Novo"));
+                ApiResponse expectedUsers = ApiResponse.success("All users", userList);
 
-        this.mockMvc.perform(request).andExpect(status().isOk());
+                this.mockMvc.perform(request).andExpect(status().isOk());
 
-        this.mockMvc.perform(request).andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+                this.mockMvc.perform(request).andExpect(status().isBadRequest())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
-        this.mockMvc.perform(get("/")).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
-    }
+                this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
+        }
 
-    @Disabled("TODO")
-    @Test
-    public void shouldGetAllUsers() {
-    }
+        @Disabled("TODO")
+        @Test
+        public void shouldGetAllUsers() {
+        }
 
-    @Disabled("TODO")
-    @Test
-    public void shouldGetUserById() {
-    }
+        @Test
+        public void shouldGetUserByUsername() throws Exception {
+                String username = "Novo";
+                ApiResponse expectedUser = ApiResponse.success("Found 1 User", new UserResponse(username));
+
+                this.mockMvc.perform(get("/username/" + username)).andExpect(status().isNotFound());
+
+                this.addUser(username, "password");
+
+                this.mockMvc.perform(get("/username/" + username)).andExpect(status().isOk())
+                                .andExpect(content().json(objectMapper.writeValueAsString(expectedUser)));
+        }
+
+        private void addUser(String username, String password) throws Exception {
+                Map<String, String> requestBody = new HashMap<String, String>();
+                requestBody.put("username", username);
+                requestBody.put("password", password);
+                RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody));
+                this.mockMvc.perform(request).andExpect(status().isOk());
+        }
 }

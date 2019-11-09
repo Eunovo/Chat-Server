@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.eunovo.userservice.entities.User;
+import com.eunovo.userservice.exceptions.*;
 import com.eunovo.userservice.models.*;
 import com.eunovo.userservice.services.AddUserService;
 import com.eunovo.userservice.services.FindUserService;
@@ -25,6 +26,14 @@ class UserServiceController {
         }).collect(Collectors.toList());
         ApiResponse response = ApiResponse.success("All users", users);
         return response;
+    }
+
+    @GetMapping("/username/{username}")
+    public ApiResponse<UserResponse> getUserByUsername(@PathVariable String username) {
+        User user = this.findUserService.findByUsername(username);
+        if (user == null) throw new ResourceNotFoundException("User");
+        UserResponse userRes = new UserResponse(user);
+        return ApiResponse.success("Found 1 User", userRes);
     }
 
     @GetMapping("/test")
