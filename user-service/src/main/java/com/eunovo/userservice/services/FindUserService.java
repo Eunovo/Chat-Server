@@ -21,7 +21,7 @@ public class FindUserService {
     }
 
     public User searchByUsername(String searchString) {
-        User result = userRepo.findByUsernameLike(searchString+"%");
+        User result = userRepo.findByUsernameLike("%"+searchString+"%");
         return result;
     }
 }
