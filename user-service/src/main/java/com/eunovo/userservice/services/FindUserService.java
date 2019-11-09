@@ -17,11 +17,11 @@ public class FindUserService {
     }
 
     public User findByUsername(String username) {
-        return userRepo.findByUsername(username);
+        return userRepo.findByUsernameIgnoreCase(username);
     }
 
     public User searchByUsername(String searchString) {
-        User result = userRepo.findByUsernameLike("%"+searchString+"%");
+        User result = userRepo.findByUsernameLikeIgnoreCase("%"+searchString+"%");
         return result;
     }
 }

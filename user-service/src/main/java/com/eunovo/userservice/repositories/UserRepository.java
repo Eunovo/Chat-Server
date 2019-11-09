@@ -12,9 +12,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAll();
 
-    User findByUsername(String username);
+    User findByUsernameIgnoreCase(String username);
 
-    User findByUsernameLike(String patter);
+    User findByUsernameLikeIgnoreCase(String patter);
 
     User save(User user);
 }

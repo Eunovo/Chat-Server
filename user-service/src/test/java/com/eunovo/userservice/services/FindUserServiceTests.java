@@ -36,9 +36,10 @@ public class FindUserServiceTests {
 
     @Test
     public void shouldFindUserWithUsernameSuffix() {
-        String suffix = "vo";
+        String suffix = "vO";
         User user = this.findUserService.searchByUsername(suffix);
         assertThat("Result is not null", user, notNullValue());
-        assertThat("Result is correct", user.getUsername(), endsWith(suffix));
+        assertThat("Result is correct", 
+            user.getUsername().toLowerCase(), endsWith(suffix.toLowerCase()));
     }
 }
