@@ -8,11 +8,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.eunovo.userservice.entities.User;
-import com.eunovo.userservice.exceptions.*;
-import com.eunovo.userservice.models.*;
 import com.eunovo.userservice.repositories.UserRepository;
 
 @RunWith(SpringRunner.class)
