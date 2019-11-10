@@ -20,7 +20,7 @@ public class AddFriendService {
     public Friend makeFriendRequest(String sourceUsername, String targetUsername) {
         User sourceUser = this.findUserService.findByUsername(sourceUsername);
         User targetUser = this.findUserService.findByUsername(targetUsername);
-        boolean hasDuplicate = this.checkForDuplicatFriendRequests(sourceUser, targetUser);
+        boolean hasDuplicate = this.checkForDuplicatFriend(sourceUser, targetUser);
         if (hasDuplicate) {
             throw new IllegalParameterException("Friend", "target", targetUsername, "already exists");
         }
@@ -28,9 +28,17 @@ public class AddFriendService {
         return this.friendRepository.save(friendRequest);
     }
 
-    public boolean checkForDuplicatFriendRequests(User source, User target) {
-        Friend friend = this.friendRepository.findFriendRequestByUserTo(source, target);
+    public boolean checkForDuplicatFriend(User source, User target) {
+        Friend friend = this.friendRepository.findFriend(source, target);
         if (friend == null) return false;
         return true;
+    }
+
+    public Friend acceptFriendRequest(String sourceUsername, String targetUsername) {
+        User sourceUser = this.findUserService.findByUsername(sourceUsername);
+        User targetUser = this.findUserService.findByUsername(targetUsername);
+        Friend friend = this.friendRepository.findFriendRequest(targetUser, sourceUser);
+        friend.setAccepted(true);
+        return this.friendRepository.save(friend);
     }
 }

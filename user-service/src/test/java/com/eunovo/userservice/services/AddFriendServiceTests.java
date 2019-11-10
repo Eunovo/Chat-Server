@@ -64,9 +64,17 @@ public class AddFriendServiceTests {
             () -> this.addFriendService.makeFriendRequest(me, targetFriend));
     }
 
-    @Disabled
     @Test
-    public void shouldRejectFriendRequestToAnExistingFriend() {}
+    public void shouldRejectFriendRequestToAnExistingFriend() {
+        String me = SOURCE_USERNAME;
+        String targetFriend = TARGET_USERNAME;
+        this.addFriendService.makeFriendRequest(me, targetFriend);
+        this.addFriendService.acceptFriendRequest(targetFriend, me);
+        assertThrows(IllegalParameterException.class, 
+            () -> this.addFriendService.makeFriendRequest(me, targetFriend));
+        assertThrows(IllegalParameterException.class, 
+            () -> this.addFriendService.makeFriendRequest(targetFriend, me));
+    }
 
     @Disabled
     @Test
