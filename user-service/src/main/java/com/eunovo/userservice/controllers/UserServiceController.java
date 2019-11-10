@@ -31,7 +31,6 @@ class UserServiceController {
     @GetMapping("/username/{username}")
     public ApiResponse<UserResponse> getUserByUsername(@PathVariable String username) {
         User user = this.findUserService.findByUsername(username);
-        if (user == null) throw new ResourceNotFoundException("User");
         UserResponse userRes = new UserResponse(user);
         return ApiResponse.success("Found 1 User", userRes);
     }

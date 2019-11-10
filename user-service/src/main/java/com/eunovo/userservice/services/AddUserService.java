@@ -11,8 +11,6 @@ import com.eunovo.userservice.repositories.*;
 public class AddUserService {
 
     @Autowired
-    FindUserService findUserService;
-    @Autowired
     UserRepository userRepo;
 
     public User addUser(User user) {
@@ -21,7 +19,7 @@ public class AddUserService {
     }
 
     private void ensureUsernameIsUnique(User user) {
-        User duplicateUser = findUserService.findByUsername(user.getUsername());
+        User duplicateUser = this.userRepo.findByUsernameIgnoreCase(user.getUsername());
         if (duplicateUser == null)
             return;
         throw new IllegalParameterException("User", "username", user.getUsername(), "already in use");

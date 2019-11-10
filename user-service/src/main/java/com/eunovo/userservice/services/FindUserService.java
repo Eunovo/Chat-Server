@@ -1,6 +1,7 @@
 package com.eunovo.userservice.services;
 
 import com.eunovo.userservice.entities.User;
+import com.eunovo.userservice.exceptions.ResourceNotFoundException;
 import com.eunovo.userservice.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ public class FindUserService {
     }
 
     public User findByUsername(String username) {
-        return userRepo.findByUsernameIgnoreCase(username);
+        User user = userRepo.findByUsernameIgnoreCase(username);
+        if (user == null) throw new ResourceNotFoundException("User");
+        return user;
     }
 
     public User searchByUsername(String searchString) {
