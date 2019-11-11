@@ -19,11 +19,11 @@ public class Friend implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(optional = false, cascade = CascadeType.REMOVE)
+    @OneToOne(optional = false)
     @JoinColumn(name = "source_id", referencedColumnName = "id")
     private User source;
 
-    @OneToOne(optional = false, cascade = CascadeType.REMOVE)
+    @OneToOne(optional = false)
     @JoinColumn(name = "target_id", referencedColumnName = "id")
     private User target;
 
