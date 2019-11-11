@@ -21,6 +21,10 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
         " or (f.source = ?2 and f.target = ?1)")
     public Friend findFriend(User source, User target);
 
+    @Query("SELECT f FROM Friend f WHERE (f.source = ?1 or f.target = ?1)" + 
+        " and f.accepted = true")
+    public List<Friend> findFriends(User user);
+
     public void delete(Friend friend);
 
 }

@@ -76,9 +76,17 @@ public class AddFriendServiceTests {
             () -> this.addFriendService.makeFriendRequest(targetFriend, me));
     }
 
-    @Disabled
     @Test
-    public void shouldAcceptFriendRequest() {}
+    public void shouldAcceptFriendRequest() {
+        String me = SOURCE_USERNAME;
+        String targetFriend = TARGET_USERNAME;
+        this.addFriendService.makeFriendRequest(me, targetFriend);
+        Friend friend = this.addFriendService.acceptFriendRequest(targetFriend, me);
+        List<User> myFriends = this.findFriendService.getFriends(me);
+        assertEquals(friend.getTarget(), myFriends.get(0));
+        List<User> targetFriends = this.findFriendService.getFriends(targetFriend);
+        assertEquals(friend.getSource(), targetFriends.get(0));
+    }
 
     @Test
     public void shouldDeclineFriendRequest() {
