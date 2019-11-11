@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.eunovo.userservice.entities.*;
 import com.eunovo.userservice.exceptions.IllegalParameterException;
+import com.eunovo.userservice.exceptions.ResourceNotFoundException;
 import com.eunovo.userservice.repositories.FriendRepository;
 
 @Service
@@ -40,5 +41,13 @@ public class AddFriendService {
         Friend friend = this.friendRepository.findFriendRequest(targetUser, sourceUser);
         friend.setAccepted(true);
         return this.friendRepository.save(friend);
+    }
+
+    public void declineFriendRequest(String sourceUsername, String targetUsername) {
+        User sourceUser = this.findUserService.findByUsername(sourceUsername);
+        User targetUser = this.findUserService.findByUsername(targetUsername);
+        Friend friend = this.friendRepository.findFriendRequest(targetUser, sourceUser);
+        if (friend == null) throw new ResourceNotFoundException("Friend");
+        this.friendRepository.delete(friend);
     }
 }

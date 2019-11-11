@@ -19,6 +19,6 @@ public class FindFriendService {
 
     public List<Friend> getFriendRequests(String username) {
         User user = this.findUserService.findByUsername(username);
-        return this.friendRepository.findFriendRequestsByUser(user);
+        return this.friendRepository.findFriendRequestsForUser(user);
     }
 }
