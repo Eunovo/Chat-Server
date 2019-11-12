@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.eunovo.userservice.entities.User;
-import com.eunovo.userservice.exceptions.*;
 import com.eunovo.userservice.models.*;
 import com.eunovo.userservice.services.AddUserService;
 import com.eunovo.userservice.services.FindUserService;
