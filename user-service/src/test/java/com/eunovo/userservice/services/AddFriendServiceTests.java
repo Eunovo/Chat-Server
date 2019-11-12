@@ -31,11 +31,14 @@ public class AddFriendServiceTests {
 
     static final String SOURCE_USERNAME = "Novo";
     static final String TARGET_USERNAME = "Bob";
+    static final String SECOND_TARGET_USERNAME = "Ben";
     @BeforeAll
     public static void createTestUsers(@Autowired AddUserService addUserService) {
         User user = new User(SOURCE_USERNAME, "password");
         addUserService.addUser(user);
         user = new User(TARGET_USERNAME, "password");
+        addUserService.addUser(user);
+        user = new User(SECOND_TARGET_USERNAME, "password");
         addUserService.addUser(user);
     }
 
@@ -48,9 +51,15 @@ public class AddFriendServiceTests {
     public void shoulMakeFriendRequest() {
         String me = SOURCE_USERNAME;
         String targetFriend = TARGET_USERNAME;
-        Friend friendRequest = this.addFriendService.makeFriendRequest(me, targetFriend);
+        String secondTarget = SECOND_TARGET_USERNAME;
+        this.assertSuccessfulFriendRequest(me, targetFriend);
+        this.assertSuccessfulFriendRequest(me, secondTarget);
+    }
+
+    public void assertSuccessfulFriendRequest(String sourceUsername, String targetUsername) {
+        Friend friendRequest = this.addFriendService.makeFriendRequest(sourceUsername, targetUsername);
         assertThat("Friend request is not accepted", friendRequest.getAccepted(), is(false));
-        List<Friend> friendRequests = this.findFriendService.getFriendRequests(me);
+        List<Friend> friendRequests = this.findFriendService.getFriendRequests(targetUsername);
         List<Friend> expectedRequests = List.of(friendRequest);
         assertEquals(expectedRequests, friendRequests);
     }
