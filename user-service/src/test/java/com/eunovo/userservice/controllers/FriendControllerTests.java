@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.eunovo.userservice.SecurityServiceTestImpl;
 import com.eunovo.userservice.entities.*;
 import com.eunovo.userservice.models.*;
+import com.eunovo.userservice.repositories.FriendRepository;
 import com.eunovo.userservice.services.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +43,11 @@ public class FriendControllerTests {
     static User SOURCE_USER;
     static User TARGET_USER;
 
+    @AfterAll
+    public static void wipeFriendDbAfterAll(@Autowired FriendRepository friendRepo) {
+        friendRepo.deleteAll();
+    }
+
     @BeforeAll
     public static void createTestUsers(@Autowired AddUserService addUserService,
             @Autowired SecurityServiceTestImpl securityService) {
@@ -52,6 +58,11 @@ public class FriendControllerTests {
         user = new User(SECOND_TARGET_USERNAME, "password");
         addUserService.addUser(user);
         securityService.setLoggedInUser(SOURCE_USER);
+    }
+
+    @BeforeEach
+    public void wipeFriendDb(@Autowired FriendRepository friendRepo) {
+        friendRepo.deleteAll();
     }
 
     @Test
