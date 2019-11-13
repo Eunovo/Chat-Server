@@ -66,6 +66,7 @@ public class FriendControllerTests {
             String content = result.getResponse().getContentAsString();
             ApiResponse<Friend> response = objectMapper.readValue(content, new TypeReference<ApiResponse<Friend>>() {
             });
+            assertEquals("Friend request sent", response.getMessage());
             assertEquals(SOURCE_USERNAME, response.getData().getSource().getUsername());
             assertEquals(TARGET_USERNAME, response.getData().getTarget().getUsername());
         });
