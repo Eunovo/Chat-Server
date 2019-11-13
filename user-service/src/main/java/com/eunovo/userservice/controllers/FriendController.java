@@ -7,12 +7,17 @@ import com.eunovo.userservice.models.ApiResponse;
 import com.eunovo.userservice.entities.*;
 import com.eunovo.userservice.services.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/friends")
 public class FriendController {
 
     @Autowired
     private AddFriendService addFriendService;
+
+    @Autowired
+    private FindFriendService findFriendService;
 
     @Autowired
     private SecurityService securityService;
@@ -28,6 +33,14 @@ public class FriendController {
         Friend friend = this.addFriendService
             .makeFriendRequest(loggedInUser.getUsername(), username);
         ApiResponse<Friend> response = ApiResponse.success("Friend request sent", friend);
+        return response;
+    }
+
+    @GetMapping("/requests")
+    public ApiResponse<List<Friend>> getFriendRequests() {
+        User loggedInUser = this.securityService.getLoggedInUser();
+        List<Friend> friendRequests = this.findFriendService.getFriendRequests(loggedInUser.getUsername());
+        ApiResponse<List<Friend>> response = ApiResponse.success("Friend requests", friendRequests);
         return response;
     }
 }
