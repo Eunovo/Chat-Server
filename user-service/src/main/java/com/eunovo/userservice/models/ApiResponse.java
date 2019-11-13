@@ -1,9 +1,10 @@
 package com.eunovo.userservice.models;
 
-import lombok.Getter;
+import lombok.*;
 
 import java.util.*;
 
+@NoArgsConstructor
 public class ApiResponse<T> {
     @Getter
     private String status;
