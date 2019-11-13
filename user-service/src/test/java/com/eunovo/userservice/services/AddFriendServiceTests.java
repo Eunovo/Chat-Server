@@ -42,6 +42,11 @@ public class AddFriendServiceTests {
         addUserService.addUser(user);
     }
 
+    @AfterAll
+    public static void wipeFriendDbAfterAll(@Autowired FriendRepository friendRepo) {
+        friendRepo.deleteAll();
+    }
+
     @BeforeEach
     public void clearFriendsDb() {
         this.friendRepository.deleteAll();
