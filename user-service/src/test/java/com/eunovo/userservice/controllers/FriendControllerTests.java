@@ -13,18 +13,15 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.eunovo.userservice.SecurityServiceTestImpl;
 import com.eunovo.userservice.entities.*;
 import com.eunovo.userservice.models.*;
 import com.eunovo.userservice.services.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Map;
-import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,13 +43,15 @@ public class FriendControllerTests {
     static User TARGET_USER;
 
     @BeforeAll
-    public static void createTestUsers(@Autowired AddUserService addUserService) {
+    public static void createTestUsers(@Autowired AddUserService addUserService,
+            @Autowired SecurityServiceTestImpl securityService) {
         User user = new User(SOURCE_USERNAME, "password");
         SOURCE_USER = addUserService.addUser(user);
         user = new User(TARGET_USERNAME, "password");
         TARGET_USER = addUserService.addUser(user);
         user = new User(SECOND_TARGET_USERNAME, "password");
         addUserService.addUser(user);
+        securityService.setLoggedInUser(SOURCE_USER);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class FriendControllerTests {
     }
 
     @Test
-    public void shoulMakeFriendRequest() throws Exception {
+    public void shouldMakeFriendRequest() throws Exception {
         String username = TARGET_USERNAME;
         this.mockMvc.perform(get(URL + "/request/" + username)).andDo((result) -> {
             String content = result.getResponse().getContentAsString();

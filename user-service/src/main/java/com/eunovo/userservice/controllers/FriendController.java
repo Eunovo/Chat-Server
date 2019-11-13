@@ -14,6 +14,9 @@ public class FriendController {
     @Autowired
     private AddFriendService addFriendService;
 
+    @Autowired
+    private SecurityService securityService;
+
     @GetMapping("/test")
     public String test() {
         return "Working";
@@ -21,7 +24,9 @@ public class FriendController {
 
     @GetMapping("/request/{username}")
     public ApiResponse<Friend> makeFriendRequest(@PathVariable("username") String username) {
-        Friend friend = this.addFriendService.makeFriendRequest("Novo", username);
+        User loggedInUser = this.securityService.getLoggedInUser();
+        Friend friend = this.addFriendService
+            .makeFriendRequest(loggedInUser.getUsername(), username);
         ApiResponse<Friend> response = ApiResponse.success("Friend request sent", friend);
         return response;
     }
