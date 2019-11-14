@@ -27,6 +27,14 @@ public class FriendController {
         return "Working";
     }
 
+    @GetMapping("/")
+    public ApiResponse<List<User>> getFriends() {
+        User loggedInUser = this.securityService.getLoggedInUser();
+        List<User> friends = this.findFriendService
+            .getFriends(loggedInUser.getUsername());
+        return ApiResponse.success("Friends", friends);
+    }
+
     @GetMapping("/request/{username}")
     public ApiResponse<Friend> makeFriendRequest(@PathVariable("username") String username) {
         User loggedInUser = this.securityService.getLoggedInUser();
@@ -43,4 +51,14 @@ public class FriendController {
         ApiResponse<List<Friend>> response = ApiResponse.success("Friend requests", friendRequests);
         return response;
     }
+
+    @GetMapping("/accept/{username}")
+    public ApiResponse<Friend> acceptFriendRequest(
+            @PathVariable("username") String username) {
+        User loggedInUser = this.securityService.getLoggedInUser();
+        Friend friend = this.addFriendService
+            .acceptFriendRequest(loggedInUser.getUsername(), username);
+        return ApiResponse.success("New friend", friend);
+    }
+    
 }
