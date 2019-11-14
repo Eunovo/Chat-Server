@@ -39,6 +39,7 @@ public class AddFriendService {
         User sourceUser = this.findUserService.findByUsername(sourceUsername);
         User targetUser = this.findUserService.findByUsername(targetUsername);
         Friend friend = this.friendRepository.findFriendRequest(targetUser, sourceUser);
+        if (friend == null) throw new ResourceNotFoundException("Friend");
         friend.setAccepted(true);
         return this.friendRepository.save(friend);
     }

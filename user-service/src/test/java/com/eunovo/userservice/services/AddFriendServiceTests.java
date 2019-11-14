@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import com.eunovo.userservice.entities.*;
-import com.eunovo.userservice.exceptions.IllegalParameterException;
+import com.eunovo.userservice.exceptions.*;
 import com.eunovo.userservice.repositories.FriendRepository;
 
 @RunWith(SpringRunner.class)
@@ -100,6 +100,15 @@ public class AddFriendServiceTests {
         assertEquals(friend.getTarget(), myFriends.get(0));
         List<User> targetFriends = this.findFriendService.getFriends(targetFriend);
         assertEquals(friend.getSource(), targetFriends.get(0));
+    }
+
+    @Test
+    public void shouldNotAcceptNonExistingFriendRequest() {
+        String me = SOURCE_USERNAME;
+        String targetFriend = TARGET_USERNAME;
+        assertThrows(ResourceNotFoundException.class, 
+            () -> this.addFriendService
+                .acceptFriendRequest(targetFriend, me));
     }
 
     @Test
