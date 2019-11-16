@@ -1,4 +1,4 @@
-package com.eunovo.com.eunovo.authservice.config;
+package com.eunovo.authservice.config;
 
 import java.io.Serializable;
 import java.util.Date;
