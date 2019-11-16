@@ -19,9 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse authenticate(JwtRequest jwtRequest) {
-        UserResponse userResponse = this.restTemplate.getForObject(userServiceUrl, UserResponse.class);
+        String authEndpoint = userServiceUrl + "/authenticate";
+        UserResponse userResponse = this.restTemplate.postForObject(authEndpoint, jwtRequest, UserResponse.class);
         return userResponse;
     }
 
-    
 }
