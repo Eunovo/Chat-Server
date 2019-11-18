@@ -6,6 +6,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserResponse {
     private String status;
@@ -14,7 +15,8 @@ public class UserResponse {
 
     @Data
     @NoArgsConstructor
-    private class User {
+    @AllArgsConstructor
+    public static class User {
         private Long id;
         private String username;
     }
