@@ -64,15 +64,19 @@ public class AuthenticationControllerTests {
         );
         this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
-        JwtRequest jwtRequest = new JwtRequest("Novo", "password");
-        String requestBody = this.objectMapper.writeValueAsString(jwtRequest);
-        RequestBuilder request = post("/generate").contentType(MediaType.APPLICATION_JSON).content(requestBody);
+        RequestBuilder request = this.makeGenerateRequest("Novo", "password");
         this.mockMvc.perform(request).andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
             JwtResponse response = this.objectMapper.readValue(content, JwtResponse.class);
             assertEquals("SUCCESS", response.getStatus());
             assertThat("A token was generated", response.getToken().length(), is(not(0)));
         });
+    }
+
+    private RequestBuilder makeGenerateRequest(String username, String password) throws Exception{
+        JwtRequest jwtRequest = new JwtRequest(username, password);
+        String requestBody = this.objectMapper.writeValueAsString(jwtRequest);
+        return post("/generate").contentType(MediaType.APPLICATION_JSON).content(requestBody);
     }
 
     private void mockAuthenticateRequest(UserResponse userResponse, HttpStatus status) throws Exception {
@@ -93,9 +97,7 @@ public class AuthenticationControllerTests {
         );
         this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
-        JwtRequest jwtRequest = new JwtRequest("Novo", "password");
-        String requestBody = this.objectMapper.writeValueAsString(jwtRequest);
-        RequestBuilder request = post("/generate").contentType(MediaType.APPLICATION_JSON).content(requestBody);
+        RequestBuilder request = this.makeGenerateRequest("Novo", "password");
         this.mockMvc.perform(request).andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
             JwtResponse response = this.objectMapper.readValue(content, JwtResponse.class);
