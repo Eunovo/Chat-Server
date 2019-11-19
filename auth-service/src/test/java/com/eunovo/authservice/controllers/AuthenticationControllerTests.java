@@ -55,13 +55,7 @@ public class AuthenticationControllerTests {
     public void shouldGenerateToken() throws Exception {
         User user = new User(9L, "Novo");
         UserResponse userResponse = new UserResponse("SUCCESS", "Authenticated", user);
-        String responseContent = this.objectMapper.writeValueAsString(userResponse);
-        mockServer.expect(ExpectedCount.once(), 
-            requestTo(new URI("http://localhost:4000/authenticate")))
-            .andExpect(method(HttpMethod.POST))
-            .andRespond(withStatus(HttpStatus.OK)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(responseContent));
+        this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
         JwtRequest jwtRequest = new JwtRequest("Novo", "password");
         String requestBody = this.objectMapper.writeValueAsString(jwtRequest);
@@ -72,6 +66,16 @@ public class AuthenticationControllerTests {
             assertEquals("SUCCESS", response.getStatus());
             assertThat("A token was generated", response.getToken().length(), is(not(0)));
         });
+    }
+
+    private void mockAuthenticateRequest(UserResponse userResponse, HttpStatus status) throws Exception {
+        String responseContent = this.objectMapper.writeValueAsString(userResponse);
+        mockServer.expect(ExpectedCount.once(), 
+            requestTo(new URI("http://localhost:4000/authenticate")))
+            .andExpect(method(HttpMethod.POST))
+            .andRespond(withStatus(status)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(responseContent));
     }
 
     @Test
