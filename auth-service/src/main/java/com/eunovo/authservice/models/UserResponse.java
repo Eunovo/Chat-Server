@@ -9,12 +9,16 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserResponse {
+
+    public static String SUCCESS_STATUS = "SUCCESS";
+    public static String ERROR_STATUS = "ERROR";
+
     private String status;
     private String message;
     private User data;
 
     public boolean isSuccessful() {
-        return (this.status == "SUCCESS");
+        return this.status.equals(SUCCESS_STATUS);
     }
 
     @Data

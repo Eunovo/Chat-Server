@@ -51,10 +51,17 @@ public class AuthenticationControllerTests {
         mockServer = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
+    @BeforeEach
+    public void wipeMockServer() {
+        mockServer.reset();
+    }
+
     @Test
     public void shouldGenerateToken() throws Exception {
         User user = new User(9L, "Novo");
-        UserResponse userResponse = new UserResponse("SUCCESS", "Authenticated", user);
+        UserResponse userResponse = new UserResponse(
+            UserResponse.SUCCESS_STATUS, "Authenticated", user
+        );
         this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
         JwtRequest jwtRequest = new JwtRequest("Novo", "password");
@@ -81,7 +88,9 @@ public class AuthenticationControllerTests {
     @Test
     public void shouldRejectInvalidUsers() throws Exception {
         String message = "Username or password incorrect";
-        UserResponse userResponse = new UserResponse("ERROR", message, null);
+        UserResponse userResponse = new UserResponse(
+            UserResponse.ERROR_STATUS, message, null
+        );
         this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
         JwtRequest jwtRequest = new JwtRequest("Novo", "password");
