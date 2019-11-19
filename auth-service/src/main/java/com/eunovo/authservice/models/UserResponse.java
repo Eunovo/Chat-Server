@@ -13,6 +13,10 @@ public class UserResponse {
     private String message;
     private User data;
 
+    public boolean isSuccessful() {
+        return (this.status == "SUCCESS");
+    }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
