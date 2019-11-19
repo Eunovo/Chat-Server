@@ -135,10 +135,10 @@ public class AuthenticationControllerTests {
         RequestBuilder valRequest = this.makeValidateRequest(token);
         this.mockMvc.perform(valRequest).andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
-            JwtResponse<String> response = this.objectMapper.readValue(
-                content, new TypeReference<JwtResponse<String>>() {});
+            JwtResponse<User> response = this.objectMapper.readValue(
+                content, new TypeReference<JwtResponse<User>>() {});
             assertEquals("SUCCESS", response.getStatus());
-            assertThat("A token was generated", response.getData().length(), is(not(0)));
+            assertThat("The correct user was returned", response.getData().getUsername(), is(username));
         });
     }
 

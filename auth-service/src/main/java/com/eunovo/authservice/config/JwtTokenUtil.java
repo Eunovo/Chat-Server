@@ -24,8 +24,11 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.token.validity}")
     private int tokenValidity;
 
-    public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+    public User getUserFromToken(String token) {
+        String userIdAsString = getClaimFromToken(token, Claims::getId);
+        Long userId = Long.parseLong(userIdAsString);
+        String username = getClaimFromToken(token, Claims::getSubject);
+        return new User(userId, username);
     }
 
     public Date getExpirationDateFromToken(String token) {
@@ -48,19 +51,19 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, user.getUsername());
+        return doGenerateToken(claims, user);
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    private String doGenerateToken(Map<String, Object> claims, User user) {
         Date currentDateAndTime = new Date(System.currentTimeMillis());
         Date expirationDateAndTime = new Date(System.currentTimeMillis() + tokenValidity * 1000);
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(currentDateAndTime)
+        return Jwts.builder().setClaims(claims).setId(user.getId().toString())
+                .setSubject(user.getUsername()).setIssuedAt(currentDateAndTime)
                 .setExpiration(expirationDateAndTime)
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-    public Boolean validateToken(String token, User user) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token) {
+        return !isTokenExpired(token);
     }
 }
