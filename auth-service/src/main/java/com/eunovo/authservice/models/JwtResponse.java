@@ -7,16 +7,16 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwtResponse implements Serializable {
+public class JwtResponse<T> implements Serializable {
     private String status;
     private String message;
-    private String token;
+    private T data;
 
-    public static JwtResponse success(String message, String token) {
-        return new JwtResponse("SUCCESS", message, token);
+    public static <T> JwtResponse<T> success(String message, T data) {
+        return new JwtResponse<>("SUCCESS", message, data);
     }
 
-    public static JwtResponse error(String message) {
-        return new JwtResponse("ERROR", message, "");
+    public static <T> JwtResponse<T> error(String message) {
+        return new JwtResponse<>("ERROR", message, null);
     }
 }

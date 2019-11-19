@@ -17,11 +17,11 @@ public class AuthenticationController {
     private JwtTokenUtil tokenUtil;
 
     @PostMapping("/generate")
-    public JwtResponse generateToken(JwtRequest request) {
+    public JwtResponse<String> generateToken(JwtRequest request) {
         UserResponse response = this.userService.authenticate(request);
         if (response.isSuccessful()) {
             String token = this.tokenUtil.generateToken(response.getData());
-            return JwtResponse.success("Token generated", token);
+            return JwtResponse.<String>success("Token generated", token);
         }
         return JwtResponse.error(response.getMessage());
     }

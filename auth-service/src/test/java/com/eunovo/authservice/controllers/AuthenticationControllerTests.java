@@ -1,12 +1,13 @@
 package com.eunovo.authservice.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.eunovo.authservice.config.TestConfig;
 import com.eunovo.authservice.models.JwtRequest;
 import com.eunovo.authservice.models.JwtResponse;
 import com.eunovo.authservice.models.UserResponse;
 
-import static com.eunovo.authservice.models.UserResponse.User; 
+import static com.eunovo.authservice.models.UserResponse.User;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.client.RestTemplate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;      
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 import java.net.URI;
@@ -67,9 +69,10 @@ public class AuthenticationControllerTests {
         RequestBuilder request = this.makeGenerateRequest("Novo", "password");
         this.mockMvc.perform(request).andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
-            JwtResponse response = this.objectMapper.readValue(content, JwtResponse.class);
+            JwtResponse<String> response = this.objectMapper.readValue(
+                content, new TypeReference<JwtResponse<String>>() {});
             assertEquals("SUCCESS", response.getStatus());
-            assertThat("A token was generated", response.getToken().length(), is(not(0)));
+            assertThat("A token was generated", response.getData().length(), is(not(0)));
         });
     }
 
@@ -77,6 +80,10 @@ public class AuthenticationControllerTests {
         JwtRequest jwtRequest = new JwtRequest(username, password);
         String requestBody = this.objectMapper.writeValueAsString(jwtRequest);
         return post("/generate").contentType(MediaType.APPLICATION_JSON).content(requestBody);
+    }
+
+    private RequestBuilder makeValidateRequest(String token) throws Exception{
+        return post("/validate").contentType(MediaType.TEXT_PLAIN).content(token);
     }
 
     private void mockAuthenticateRequest(UserResponse userResponse, HttpStatus status) throws Exception {
@@ -100,15 +107,39 @@ public class AuthenticationControllerTests {
         RequestBuilder request = this.makeGenerateRequest("Novo", "password");
         this.mockMvc.perform(request).andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
-            JwtResponse response = this.objectMapper.readValue(content, JwtResponse.class);
+            JwtResponse<String> response = this.objectMapper.readValue(
+                content, new TypeReference<JwtResponse<String>>() {});
             assertEquals("ERROR", response.getStatus());
-            assertThat("No token was generated", response.getToken().length(), is(0));
+            assertThat("No token was generated", response.getData(), nullValue());
         });
     }
 
     @Test
-    public void shouldValidateToken() {
+    public void shouldValidateToken() throws Exception {
+        String username = "Novo";
+        String password = "password";
+        User user = new User(9L, username);
+        UserResponse userResponse = new UserResponse(
+            UserResponse.SUCCESS_STATUS, "Authenticated", user
+        );
+        this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
+        RequestBuilder authRequest = this.makeGenerateRequest(username, password);
+        MvcResult authResult = this.mockMvc.perform(authRequest)
+                                .andExpect(status().isOk()).andReturn();
+        String authContent = authResult.getResponse().getContentAsString();
+        JwtResponse<String> authResponse = this.objectMapper.readValue(
+                authContent, new TypeReference<JwtResponse<String>>() {});
+        String token = authResponse.getData();
+
+        RequestBuilder valRequest = this.makeValidateRequest(token);
+        this.mockMvc.perform(valRequest).andExpect(status().isOk()).andDo((result) -> {
+            String content = result.getResponse().getContentAsString();
+            JwtResponse<String> response = this.objectMapper.readValue(
+                content, new TypeReference<JwtResponse<String>>() {});
+            assertEquals("SUCCESS", response.getStatus());
+            assertThat("A token was generated", response.getData().length(), is(not(0)));
+        });
     }
 
     @Test
