@@ -19,7 +19,10 @@ public class AuthenticationController {
     @PostMapping("/generate")
     public JwtResponse generateToken(JwtRequest request) {
         UserResponse response = this.userService.authenticate(request);
-        String token = this.tokenUtil.generateToken(response.getData());
-        return JwtResponse.success("Token generated", token);
+        if (response.isSuccessful()) {
+            String token = this.tokenUtil.generateToken(response.getData());
+            return JwtResponse.success("Token generated", token);
+        }
+        return JwtResponse.error(response.getMessage());
     }
 }

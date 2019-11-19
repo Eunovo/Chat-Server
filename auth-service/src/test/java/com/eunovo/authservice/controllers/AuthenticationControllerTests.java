@@ -79,8 +79,20 @@ public class AuthenticationControllerTests {
     }
 
     @Test
-    public void shouldRejectInvalidUsers() {
+    public void shouldRejectInvalidUsers() throws Exception {
+        String message = "Username or password incorrect";
+        UserResponse userResponse = new UserResponse("ERROR", message, null);
+        this.mockAuthenticateRequest(userResponse, HttpStatus.OK);
 
+        JwtRequest jwtRequest = new JwtRequest("Novo", "password");
+        String requestBody = this.objectMapper.writeValueAsString(jwtRequest);
+        RequestBuilder request = post("/generate").contentType(MediaType.APPLICATION_JSON).content(requestBody);
+        this.mockMvc.perform(request).andExpect(status().isOk()).andDo((result) -> {
+            String content = result.getResponse().getContentAsString();
+            JwtResponse response = this.objectMapper.readValue(content, JwtResponse.class);
+            assertEquals("ERROR", response.getStatus());
+            assertThat("No token was generated", response.getToken().length(), is(0));
+        });
     }
 
     @Test
