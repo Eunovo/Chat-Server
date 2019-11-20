@@ -2,10 +2,13 @@ package com.eunovo.userservice.models;
 
 import com.eunovo.userservice.entities.User;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
+    private Long id;
     private String username;
 
     public UserResponse(String username) {
@@ -13,6 +16,7 @@ public class UserResponse {
     }
 
     public UserResponse(User user) {
+        this.id = user.getId();
         this.username = user.getUsername();
     }
 }
