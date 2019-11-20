@@ -36,7 +36,6 @@ public class AddUserServiceTests {
         SignupUser newUser = new SignupUser("Novo", "password");
         User savedUser = this.addUserService.addUser(newUser.toUserEntity());
         assertEquals(savedUser.getUsername(), newUser.getUsername());
-        assertEquals(savedUser.getPassword(), newUser.getPassword());
         User result = this.findUserSerivce.findByUsername(newUser.getUsername());
         assertEquals(savedUser, result);
     }
