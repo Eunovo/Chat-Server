@@ -19,6 +19,10 @@ public class AddUserService {
 
     public User addUser(User user) {
         this.ensureUsernameIsUnique(user);
+        if (user.getPassword() == null) {
+            throw new IllegalParameterException(
+                "User", "password", null, "must not be null");
+        }
         String encodedPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         return userRepo.save(user);
