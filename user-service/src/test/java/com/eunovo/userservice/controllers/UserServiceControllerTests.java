@@ -145,14 +145,13 @@ public class UserServiceControllerTests {
     @Test
     public void shouldGetUserByUsername() throws Exception {
         String username = "Novo";
-        ApiResponse expectedUser = ApiResponse.success("Found 1 User", new UserResponse(username));
-
         this.mockMvc.perform(get("/username/" + username)).andExpect(status().isNotFound());
 
         this.addUser(username, "password");
 
-        this.mockMvc.perform(get("/username/" + username)).andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedUser)));
+        MvcResult result = this.mockMvc.perform(get("/username/" + username))
+            .andExpect(status().isOk()).andReturn();
+        this.assertUserResult(username, result);
     }
 
     private void addUser(String username, String password) throws Exception {
