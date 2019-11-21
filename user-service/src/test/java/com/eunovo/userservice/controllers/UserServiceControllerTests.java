@@ -117,8 +117,7 @@ public class UserServiceControllerTests {
         Map<String, String> requestBody = new HashMap<String, String>();
         requestBody.put("username", username);
         requestBody.put("password", "password");
-        List<ApiError> errorsList = List.of(new ApiValidationError(
-            "User", "username", username, "already in use"));
+        List<ApiError> errorsList = List.of(new ApiValidationError("User", "username", username, "already in use"));
         ApiResponse expectedResponse = ApiResponse.error("Illegal parameter", errorsList);
         RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody));
@@ -128,8 +127,7 @@ public class UserServiceControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
         MvcResult result = this.mockMvc.perform(get("/")).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
         String responseString = result.getResponse().getContentAsString();
         ApiResponse<List<UserResponse>> users = this.objectMapper.readValue(responseString,
                 new TypeReference<ApiResponse<List<UserResponse>>>() {
@@ -151,8 +149,7 @@ public class UserServiceControllerTests {
 
         this.addUser(username, "password");
 
-        MvcResult result = this.mockMvc.perform(get("/username/" + username))
-            .andExpect(status().isOk()).andReturn();
+        MvcResult result = this.mockMvc.perform(get("/username/" + username)).andExpect(status().isOk()).andReturn();
         this.assertUserResult(username, result);
     }
 
