@@ -57,6 +57,10 @@ public class UserServiceControllerTests {
                 .contentType(MediaType.APPLICATION_JSON).content(authRequestAsString);
             MvcResult result = this.mockMvc.perform(authRequestBuilder)
                 .andExpect(status().isOk()).andReturn();
+            this.assertUserResult(username, result);
+        }
+
+        private void assertUserResult(String username, MvcResult result) throws Exception {
             String response = result.getResponse().getContentAsString();
             ApiResponse<UserResponse> userResponse = this.objectMapper
                 .readValue(response, new TypeReference<ApiResponse<UserResponse>>() {});
@@ -65,23 +69,26 @@ public class UserServiceControllerTests {
 
         @Test
         public void shouldAddUser() throws Exception {
+                String username = "Novo";
                 Map<String, String> requestBody = new HashMap<String, String>();
-                requestBody.put("username", "Novo");
+                requestBody.put("username", username);
                 requestBody.put("password", "password");
-                ApiResponse expectedResponse = ApiResponse.success("User created", new UserResponse("Novo"));
                 RequestBuilder request = post("/").contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(requestBody));
-                List<UserResponse> userList = new ArrayList();
-                userList.add(new UserResponse("Novo"));
-                ApiResponse expectedUsers = ApiResponse.success("All users", userList);
-
-                this.mockMvc.perform(request).andExpect(status().isOk())
+                MvcResult result = this.mockMvc.perform(request).andExpect(status().isOk())
                                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+                                .andReturn();
+                assertUserResult(username, result);
 
-                this.mockMvc.perform(get("/")).andExpect(status().isOk())
+                result = this.mockMvc.perform(get("/")).andExpect(status().isOk())
                                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
+                                .andReturn();
+                String responseString = result.getResponse().getContentAsString();
+                ApiResponse<List<UserResponse>> users = this.objectMapper.readValue(
+                    responseString, new TypeReference<ApiResponse<List<UserResponse>>>() {}) ;
+                assertEquals(users.getData().size(), 1);
+                UserResponse user = users.getData().get(0);
+                assertEquals(username, user.getUsername());
         }
 
         @Test
