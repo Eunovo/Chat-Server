@@ -68,7 +68,7 @@ public class AuthenticationTests {
         String username = "Novo";
         User user = new User(username, "password");
         this.addUserService.addUser(user);
-        String url = userSerivceUrl+"/";
+        String url = userSerivceUrl+"/v1/friends/test";
         RequestBuilder request = get(url);
         this.assertIsUnAuthenticated(request);
 
