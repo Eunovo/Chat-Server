@@ -1,8 +1,6 @@
 package com.eunovo.userservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.eunovo.userservice.models.ApiResponse;
@@ -64,10 +62,7 @@ public class FriendController {
     }
 
     public String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext()
-            .getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        return currentPrincipalName;
+        return this.securityService.getLoggedInUsername();
     }
     
 }
