@@ -1,6 +1,8 @@
 package com.eunovo.userservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.eunovo.userservice.models.ApiResponse;
@@ -37,17 +39,17 @@ public class FriendController {
 
     @GetMapping("/request/{username}")
     public ApiResponse<Friend> makeFriendRequest(@PathVariable("username") String username) {
-        User loggedInUser = this.securityService.getLoggedInUser();
+        String loggedInUsername = this.getCurrentUsername();
         Friend friend = this.addFriendService
-            .makeFriendRequest(loggedInUser.getUsername(), username);
+            .makeFriendRequest(loggedInUsername, username);
         ApiResponse<Friend> response = ApiResponse.success("Friend request sent", friend);
         return response;
     }
 
     @GetMapping("/requests")
     public ApiResponse<List<Friend>> getFriendRequests() {
-        User loggedInUser = this.securityService.getLoggedInUser();
-        List<Friend> friendRequests = this.findFriendService.getFriendRequests(loggedInUser.getUsername());
+        String loggedInUsername = this.getCurrentUsername();
+        List<Friend> friendRequests = this.findFriendService.getFriendRequests(loggedInUsername);
         ApiResponse<List<Friend>> response = ApiResponse.success("Friend requests", friendRequests);
         return response;
     }
@@ -59,6 +61,13 @@ public class FriendController {
         Friend friend = this.addFriendService
             .acceptFriendRequest(loggedInUser.getUsername(), username);
         return ApiResponse.success("New friend", friend);
+    }
+
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext()
+            .getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        return currentPrincipalName;
     }
     
 }

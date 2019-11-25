@@ -1,5 +1,6 @@
 package com.eunovo.userservice.controllers;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -69,15 +71,16 @@ public class FriendControllerTests {
     }
 
     @Test
+    @WithMockUser(SOURCE_USERNAME)
     public void shouldReturnDefaultMessage() throws Exception {
         this.mockMvc.perform(get(URL + "/test")).andExpect(status().isOk()).andExpect(content().string("Working"));
     }
 
     @Test
     public void shouldMakeFriendRequest() throws Exception {
-        this.securityService.setLoggedInUser(SOURCE_USER);
         String username = TARGET_USERNAME;
-        this.mockMvc.perform(get(URL + "/request/" + username)).andExpect(status().isOk()).andDo((result) -> {
+        this.mockMvc.perform(get(URL + "/request/" + username).with(user(SOURCE_USERNAME)))
+            .andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
             ApiResponse<Friend> response = objectMapper.readValue(content, new TypeReference<ApiResponse<Friend>>() {
             });
@@ -86,8 +89,8 @@ public class FriendControllerTests {
             assertEquals(TARGET_USERNAME, response.getData().getTarget().getUsername());
         });
 
-        this.securityService.setLoggedInUser(TARGET_USER);
-        this.mockMvc.perform(get(URL + "/requests")).andExpect(status().isOk()).andDo((result) -> {
+        this.mockMvc.perform(get(URL + "/requests").with(user(TARGET_USERNAME)))
+            .andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
             ApiResponse<List<Friend>> response = objectMapper.readValue(content,
                     new TypeReference<ApiResponse<List<Friend>>>() {
