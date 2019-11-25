@@ -104,12 +104,12 @@ public class FriendControllerTests {
 
     @Test
     public void shouldAcceptFriendRequest() throws Exception {
-        this.securityService.setLoggedInUser(SOURCE_USER);
-        this.mockMvc.perform(get(URL + "/request/" + TARGET_USERNAME))
+        this.mockMvc.perform(get(URL + "/request/" + TARGET_USERNAME)
+            .with(user(SOURCE_USERNAME)))
             .andExpect(status().isOk());
 
-        this.securityService.setLoggedInUser(TARGET_USER);
-        this.mockMvc.perform(get(URL + "/accept/" + SOURCE_USERNAME))
+        this.mockMvc.perform(get(URL + "/accept/" + SOURCE_USERNAME)
+            .with(user(TARGET_USERNAME)))
             .andExpect(status().isOk())
             .andDo((result) -> {
                 String content = result.getResponse().getContentAsString();
@@ -125,8 +125,8 @@ public class FriendControllerTests {
     }
 
     private void assertFriends(User user, String username, int index) throws Exception{
-        this.securityService.setLoggedInUser(user);
-        this.mockMvc.perform(get(URL + "/"))
+        this.mockMvc.perform(get(URL + "/")
+            .with(user(user.getUsername())))
             .andExpect(status().isOk()).andDo((result) -> {
             String content = result.getResponse().getContentAsString();
             ApiResponse<List<User>> response = objectMapper.readValue(content,
