@@ -10,8 +10,8 @@
 	<groupId>com.eunovo</groupId>
 	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>UserService</name>
+	<description>User service for my demo chat app</description>
 
 	<properties>
 		<java.version>1.10</java.version>
