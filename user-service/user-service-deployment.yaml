@@ -16,6 +16,6 @@ spec:
       containers:
       - name: user-service
         image: chat-app/user-service
-        imagePullPolicy: Always
+        imagePullPolicy: Never
         ports:
         - containerPort: 80
