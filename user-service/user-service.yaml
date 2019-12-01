@@ -4,6 +4,8 @@ metadata:
   name: chat-users
   namespace: chat-app
 spec:
+  type: ExternalName
+  externalName: chats.users.com
   selector:
     app: user-service
   ports:
