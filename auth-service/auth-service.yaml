@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-auth
+  namespace: chat-app
+spec:
+  type: ExternalName
+  externalName: chats.auth.com
+  selector:
+    app: auth-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
