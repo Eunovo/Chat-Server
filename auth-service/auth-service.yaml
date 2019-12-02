@@ -5,11 +5,10 @@ metadata:
   namespace: chat-app
 spec:
   type: ExternalName
-  externalName: chats.auth.com
+  externalName: chat.auth.com
   selector:
     app: auth-service
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8080
-  # type: LoadBalancer

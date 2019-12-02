@@ -5,11 +5,10 @@ metadata:
   namespace: chat-app
 spec:
   type: ExternalName
-  externalName: chats.users.com
+  externalName: chat.users.com
   selector:
     app: user-service
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8080
-  # type: LoadBalancer
