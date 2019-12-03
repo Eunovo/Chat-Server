@@ -34,5 +34,13 @@ describe("Rerouter", () => {
             url = "b/auth";
             expect(urlMatcher(test, url)).to.eq(true);
         });
+
+        it("should match '*' in between other chars", () => {
+            let test = "users/*/auth";
+            let url = "auth/t";
+            expect(urlMatcher(test, url)).to.eq(false);
+            url = "users/b/auth";
+            expect(urlMatcher(test, url)).to.eq(true);
+        });
     });
 });

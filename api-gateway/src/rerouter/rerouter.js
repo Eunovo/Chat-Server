@@ -16,8 +16,12 @@ module.exports.urlMatcher = (matcher, url) => {
     if (matcher.endsWith('*')) {
         let matcherString = matcher.substring(0, indexOfStar);
         return url.startsWith(matcherString);
-    } else {
+    } else if (matcher.startsWith('*')) {
         let matcherString = matcher.substr(1);
         return url.endsWith(matcherString);
+    } else {
+        let preffix = matcher.substring(0, indexOfStar);
+        let suffix = matcher.substr(indexOfStar + 1);
+        return url.startsWith(preffix) && url.endsWith(suffix);
     }
 }
