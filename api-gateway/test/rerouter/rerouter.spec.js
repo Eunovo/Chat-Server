@@ -9,11 +9,12 @@ describe("Rerouter", () => {
         const routes = new Map([
             ["auth/*", target]
         ]);
+        const path = "/login";
         const testRequest = {
-            url: "http://test.com/auth"
+            url: "http://test.com/auth" + path
         };
         const route = makeRouter(routes);
         let newRequest = route(testRequest);
-        expect(newRequest.url).to.equal(target);
+        expect(newRequest.url).to.equal(target+path);
     });
 });
