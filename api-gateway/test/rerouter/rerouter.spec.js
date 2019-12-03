@@ -26,5 +26,13 @@ describe("Rerouter", () => {
             url = "bauth/b";
             expect(urlMatcher(test, url)).to.eq(false);
         });
+
+        it("should match '*' at the beginning", () => {
+            let test = "*/auth";
+            let url = "auth/t";
+            expect(urlMatcher(test, url)).to.eq(false);
+            url = "b/auth";
+            expect(urlMatcher(test, url)).to.eq(true);
+        });
     });
 });
