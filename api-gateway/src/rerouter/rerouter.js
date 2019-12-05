@@ -1,10 +1,19 @@
+const axios = require('axios');
+
 module.exports.makeRouter = (key, value) => {
-    return (req, res) => {
+    return async (req, res) => {
         let url = transformUrl(req.url, key, value);
-        return Object.freeze({
+        let newRequest = {
             url,
             method: req.method,
-        });
+            data: req.body,
+            responseType: req.accepts(['json']),
+            headers: {
+                'Authorisation': req.get('authorisation')
+            }
+        };
+        let response = await axios.request(newRequest);
+        return res.status(response.status).json(response.data);
     };
 }
 
