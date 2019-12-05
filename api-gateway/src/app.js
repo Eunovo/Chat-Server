@@ -2,14 +2,15 @@ const fs = require('fs');
 const express = require('express');
 const dotenv = require('dotenv');
 
-const rerouter = require('./rerouter/rerouter');
+const { makeRouter: rerouter } = require('./rerouter/rerouter');
 
 dotenv.config();
 
 const app = express();
+app.use(express.json())
 
-const routesStr = fs.readFileSync('./routes.json');
-const routes = JSON.parse(routesStr);
+const routesStr = fs.readFileSync('routes.json');
+const routes = new Map(JSON.parse(routesStr));
 routes.forEach((value, key) => {
     app.use(key, rerouter(key, value));
 });
@@ -23,8 +24,8 @@ app.use((req, res, err) => {
     });
 });
 
-const port = process.env.PORT;
+const port = 3000;
 
 app.listen(port, () => {
-    console.log("Starting Api Gateway...")
+    console.log(`Starting Api Gateway on port:${port}`)
 });
