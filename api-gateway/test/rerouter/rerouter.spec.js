@@ -1,20 +1,15 @@
 const mocha = require("mocha");
 const { expect } = require("chai");
 
-const { makeRouter } = require("../../src/rerouter/rerouter");
+const { transformUrl } = require("../../src/rerouter/rerouter");
 
 describe("Rerouter", () => {
-    it("should route the request as specified in the routes input", () => {
+    it("should transform the url", () => {
         const target = "http://auth.com";
-        const routes = new Map([
-            ["auth/", target]
-        ]);
+        const key = "/auth";
         const path = "/login";
-        const testRequest = {
-            url: "http://test.com/auth" + path
-        };
-        const route = makeRouter(routes);
-        let newRequest = route(testRequest);
-        expect(newRequest.url).to.equal(target+path);
+        const testRequest = "http://test.com/auth"+path;
+        let newRequestUrl = transformUrl(testRequest, key, target);
+        expect(newRequestUrl).to.equal(target+path);
     });
 });
