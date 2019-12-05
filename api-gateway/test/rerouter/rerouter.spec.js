@@ -7,9 +7,14 @@ describe("Rerouter", () => {
     it("should transform the url", () => {
         const target = "http://auth.com";
         const key = "/auth";
-        const path = "/login";
-        const testRequest = "http://test.com/auth"+path;
-        let newRequestUrl = transformUrl(testRequest, key, target);
-        expect(newRequestUrl).to.equal(target+path);
+        let path = "/login";
+        const test = () => {
+            let testRequest = "http://test.com/auth"+path;
+            let newRequestUrl = transformUrl(testRequest, key, target);
+            expect(newRequestUrl).to.equal(target+path);
+        }
+        test();
+        path = "";
+        test();
     });
 });
