@@ -24,7 +24,8 @@ app.use((req, res, err) => {
     });
 });
 
-const port = 3000;
+const isProduction = process.env.NODE_ENV === "production";
+const port = isProduction ? process.env.PORT : 3000;
 
 app.listen(port, () => {
     console.log(`Starting Api Gateway on port:${port}`)
