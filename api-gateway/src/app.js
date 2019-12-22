@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 app.use(express.json())
 
-const routesStr = fs.readFileSync('routes.json');
+const routesStr = fs.readFileSync(`${__dirname}/routes.json`);
 const routes = new Map(JSON.parse(routesStr));
 routes.forEach((value, key) => {
     app.use(key, rerouter(key, value));
