@@ -4,11 +4,11 @@ metadata:
   name: chat-users
   namespace: chat-app
 spec:
-  type: ExternalName
-  externalName: chat.users.com
+  type: ClusterIP
   selector:
     app: user-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 80
     targetPort: 8080

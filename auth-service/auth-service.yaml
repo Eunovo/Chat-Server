@@ -4,8 +4,7 @@ metadata:
   name: chat-auth
   namespace: chat-app
 spec:
-  type: ExternalName
-  externalName: chat.auth.com
+  type: ClusterIP
   selector:
     app: auth-service
   ports:
