@@ -17,6 +17,18 @@ routes.forEach((value, key) => {
 
 app.use((err, req, res, next) => {
     console.log(err);
+    next(err);
+});
+
+app.use((err, req, res, next) => {
+    if (err.response) {
+        res.status(err.response.status).json(err.response.data);
+    } else {
+        next(err);
+    }
+});
+
+app.use((err, req, res, next) => {
     res.status(500).json({
         status: "ERROR",
         message: "An error has occurred",
