@@ -4,9 +4,10 @@ module.exports.makeRouter = (key, value) => {
     return async (req, res, next) => {
         try {
             let url = transformUrl(req.originalUrl, key, value);
+            let method = req.method;
             let newRequest = {
                 url,
-                method: req.method,
+                method,
                 data: req.body,
                 responseType: req.accepts(['json']),
                 headers: {
@@ -14,7 +15,16 @@ module.exports.makeRouter = (key, value) => {
                 }
             };
             let response = await axios.request(newRequest);
-            console.log(req, response);
+            let responseMessage = "";
+            if (response) {
+                if (response.data) {
+                    responseMessage = response.data.message;
+                }
+            }
+            console.log(`Request ${req.originalUrl}, ` +
+                `Response Method: ${method}, URL: ${url}, `+
+                `Status: ${response.status}, `+
+                `Message: ${responseMessage}`);
             return res.status(response.status).json(response.data);
         } catch (err) {
             next(err);
