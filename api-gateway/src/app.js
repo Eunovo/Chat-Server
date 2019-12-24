@@ -15,12 +15,12 @@ routes.forEach((value, key) => {
     app.use(key, rerouter(key, value));
 });
 
-app.use((req, res, err) => {
-    // error handler
+app.use((err, req, res, next) => {
+    console.log(err);
     res.status(500).json({
         status: "ERROR",
         message: "An error has occurred",
-        data: null,
+        data: err.message,
     });
 });
 
