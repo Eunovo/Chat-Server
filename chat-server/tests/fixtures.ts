@@ -3,7 +3,7 @@ import { ObjectId } from "bson";
 import Chat, { UserInfo, Receipient, Message } from "../src/data/chat";
 import ChatRepo from "../src/repos/chat_repo";
 
-const date = new Date();
+export const date = new Date();
 export const dummyId = new ObjectId(date.getTime() / 1000);
 export const sender = new UserInfo("55", "Novo");
 export const receipient = new Receipient("single", 
