@@ -8,6 +8,7 @@ class Chat {
     receipient: Receipient;
     message: Message;
     timestamp: Date;
+    createdAt: Date;
 
     constructor(id: Object, sender: UserInfo,
         receipient: Receipient, message: Message, timestamp: Date) {

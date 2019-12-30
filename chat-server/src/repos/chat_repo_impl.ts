@@ -15,7 +15,8 @@ export default class MongooseChatRepo implements ChatRepo {
         let newChat = new ChatModel({
             sender: chat.sender,
             receipient: chat.receipient,
-            message: chat.message
+            message: chat.message,
+            timestamp: chat.timestamp,
         });
         let savedChat = await newChat.save();
         return this.convertIChatToChat(savedChat);
@@ -26,9 +27,12 @@ export default class MongooseChatRepo implements ChatRepo {
     }
 
     convertIChatToChat(ichat: IChat): Chat {
-        let { _id, sender, receipient, message } = ichat;
-        let timestamp = new ObjectId(_id).getTimestamp();
-        return new Chat(_id, sender, receipient, message, timestamp);
+        let { _id, sender, receipient, message, timestamp } = ichat;
+        let createdAt = new ObjectId(_id).getTimestamp();
+        let chat = new Chat(_id, sender, receipient, 
+            message, timestamp);
+        chat.createdAt = createdAt;
+        return chat;
     }
 
 }
