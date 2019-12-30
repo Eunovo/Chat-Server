@@ -4,6 +4,7 @@ import { ObjectId } from "bson";
 import Chat from "../data/chat";
 import ChatRepo from "./chat_repo";
 import ChatModel, { IChat } from "../db/models";
+import IllegalInputError from "../errors/illegal_input_error";
 
 export default class MongooseChatRepo implements ChatRepo {
     model: mongoose.Model<IChat>;
@@ -18,8 +19,15 @@ export default class MongooseChatRepo implements ChatRepo {
             message: chat.message,
             timestamp: chat.timestamp,
         });
-        let savedChat = await newChat.save();
-        return this.convertIChatToChat(savedChat);
+        try {
+            let savedChat = await newChat.save();
+            return this.convertIChatToChat(savedChat);
+        } catch (e) {
+            if (e.code === 11000) {
+                throw new IllegalInputError("Chat already exists");
+            }
+            throw e;
+        }
     }    
 
     getFromTo(fromId?: Object, toId?: Object): Promise<Chat[]> {
