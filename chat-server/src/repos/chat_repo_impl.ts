@@ -22,7 +22,7 @@ export default class MongooseChatRepo implements ChatRepo {
         return this.convertIChatToChat(savedChat);
     }    
 
-    getFromTo(fromId?: Object, toId?: Object): Promise<Chat> {
+    getFromTo(fromId?: Object, toId?: Object): Promise<Chat[]> {
         throw new Error("Method not implemented.");
     }
 
