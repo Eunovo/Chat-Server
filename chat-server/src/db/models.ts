@@ -11,27 +11,27 @@ export interface IChat extends mongoose.Document {
 };
 
 
-const UserInfoSchema = new mongoose.Schema({
+const UserInfoType = {
     id: String,
     username: String,
-});
+};
 
 export const ChatSchema = new mongoose.Schema({
-    sender: UserInfoSchema,
+    sender: UserInfoType,
     receipient: {
         type: { type: String },
-        data: { type: UserInfoSchema }
+        data: UserInfoType
     },
     message: {
-        type: String,
+        type: { type: String },
         data: String
     },
     hash: { type: String, unique: true }
 });
 
 ChatSchema.pre("save", function (next) {
-    console.log(this);
-    let hash = JSON.stringify(this);
+    let { sender, receipient, message } = this as any;
+    let hash = JSON.stringify({ sender, receipient, message });
     hash = crypto.createHash('sha1').update(hash).digest('hex');
     (this as IChat).hash = hash;
     next();
