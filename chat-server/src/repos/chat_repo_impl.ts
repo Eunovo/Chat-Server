@@ -13,7 +13,6 @@ export default class MongooseChatRepo implements ChatRepo {
 
     async save(chat: Chat): Promise<Chat> {
         let newChat = new ChatModel({
-            _id: chat.id,
             sender: chat.sender,
             receipient: chat.receipient,
             message: chat.message
