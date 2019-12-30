@@ -36,14 +36,10 @@ describe("Chat Data test", () => {
         let validReceipient = new Receipient("single",
             new UserInfo("id", "novo"));
         let validMessage = new Message("text", "hello");
-        let createWithId = (id) => () => new Chat(id, validSender, 
-            validReceipient, validMessage, 
-            new Date()).validate();
         let createWithSender = (sender) =>
             () => (new Chat("id", sender, validReceipient,
                 validMessage, new Date())).validate();
-
-        expect(createWithId("")).to.throw(ConstraintViolationError);
+                
         expect(createWithSender(invalidSender))
             .to.throw(ConstraintViolationError);
     });

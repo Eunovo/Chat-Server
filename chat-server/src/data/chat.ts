@@ -19,7 +19,7 @@ class Chat {
     }
 
     validate() {
-        let propertiesToValidate = ["id", "sender",
+        let propertiesToValidate = ["sender",
             "receipient", "message", "timestamp"];
         for (let i = 0; i < propertiesToValidate.length; i++) {
             if (!checkIfExists(this[propertiesToValidate[i]])) {
