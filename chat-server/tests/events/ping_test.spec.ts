@@ -7,7 +7,7 @@ import server, { port } from "../../src/app";
 const expect = chai.expect;
 const serverUrl = `http://localhost:${port}`;
 
-describe('WebSocker ping test', () => {
+describe('WebSocket ping test', () => {
     after((done) => {
         server.close((err) => {
             if (err) {
