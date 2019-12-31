@@ -20,6 +20,4 @@ export default class ChatServiceImpl implements ChatService {
     getChatsFromTo(fromId: Object, toId: Object): Promise<Chat[]> {
         return chatRepo.getFromTo(fromId, toId);
     }
-
-    
 }
