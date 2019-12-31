@@ -30,8 +30,24 @@ export default class MongooseChatRepo implements ChatRepo {
         }
     }    
 
-    getFromTo(fromId?: Object, toId?: Object): Promise<Chat[]> {
-        throw new Error("Method not implemented.");
+    async getFromTo(fromId?: Object, toId?: Object): Promise<Chat[]> {
+        let query = {};
+        if (fromId && toId) {
+            query = {
+                ...query,
+                "sender.id": fromId,
+                "receipient.data.id": toId  
+            };
+        } else if (fromId) {
+            query = {
+                ...query,
+                "sender.id": fromId    
+            };
+        } else if (toId) {
+            query = { ...query,  "receipient.data.id": toId }
+        }
+        let results = await this.model.find(query)
+        return results.map(this.convertIChatToChat);
     }
 
     convertIChatToChat(ichat: IChat): Chat {

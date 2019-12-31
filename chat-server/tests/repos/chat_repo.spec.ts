@@ -2,7 +2,7 @@ import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import mocha from "mocha";
 
-import Chat from "../../src/data/chat";
+import Chat, { Receipient, UserInfo } from "../../src/data/chat";
 import connectDb, { disconnect } from "../../src/db/config";
 import ChatModel from "../../src/db/models";
 import IllegalInputError from "../../src/errors/illegal_input_error";
@@ -14,13 +14,23 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 const should = chai.should();
 
+const conversation = [
+    { sender, receipient, message, date, hash: "a" },
+    { sender: receipient.data, 
+        receipient: new Receipient("single", sender), 
+        message, date, hash: "b" },
+    { sender, receipient: new Receipient("single", 
+        new UserInfo("100", "Zee")), 
+        message, date, hash: "c" },
+];
+
 describe("Repo Test", () => {
     before(() => {
         connectDb("mongodb://localhost:27017/ChatServerTest");
     });
 
-    beforeEach((done) => {
-        ChatModel.deleteMany({}, () => done());
+    beforeEach(async () => {
+        await ChatModel.deleteMany({});
     });
 
     after(async () => {
@@ -35,19 +45,39 @@ describe("Repo Test", () => {
         expect(savedChat.id).to.not.equal(undefined);
     });
 
-    it("should reject duplicate chats", () => {
-        let operation = async () => {
-            await chatRepo.save(new Chat(
+    it("should reject duplicate chats", async () => {
+        await chatRepo.save(new Chat(
                 null, sender, receipient, message, date
-            ));
-            await chatRepo.save(new Chat(
+        ));
+        let savePromise = chatRepo.save(new Chat(
                 null, sender, receipient, message, date
-            ));
-        }
-        operation().should.be.rejectedWith(IllegalInputError);
+        ));
+        savePromise.should.be.rejectedWith(IllegalInputError);
     });
 
-    xit("should get chats from", () => {});
-    xit("should get chats to", () => {});
-    xit("should get chats from and to", () => {});
+    it("should get chats from", async () => {
+        await ChatModel.insertMany(conversation.slice(0, 2));
+
+        let results = await chatRepo.getFromTo(sender.id);
+        expect(results.length).to.equal(1);
+        expect(results[0].sender.id).to.equal(sender.id);
+    });
+
+    it("should get chats to", async () => {
+        await ChatModel.insertMany(conversation);
+
+        let results = await chatRepo.getFromTo(undefined, sender.id);
+        expect(results.length).to.equal(1);
+        expect(results[0].receipient.data.id).to.equal(sender.id);
+    });
+
+    it("should get chats from and to", async () => {
+        await ChatModel.insertMany(conversation);
+        let results = await chatRepo.getFromTo(
+            sender.id, receipient.data.id);
+            expect(results.length).to.equal(1);
+            expect(results[0].sender.id).to.equal(sender.id);
+            expect(results[0].receipient.data.id)
+                .to.equal(receipient.data.id);
+    });
 });
