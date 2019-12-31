@@ -1,7 +1,22 @@
 import { ObjectId } from "bson";
 
+import AuthService from "../src/services/auth_service";
 import Chat, { UserInfo, Receipient, Message } from "../src/data/chat";
 import ChatRepo from "../src/repos/chat_repo";
+
+export const validToken = "valid_token";
+export const invalidToken = "invalid_token";
+
+export const authService: AuthService = {
+    authenticate: (token: string) => {
+        if (token === validToken) {
+            return Promise.resolve(new UserInfo("1", "Novo"));
+        } else if (token === invalidToken) {
+            return Promise.reject(new Error("Invalid Token"));
+        }
+        return Promise.reject(new Error("Incorrect Token"));
+    }
+}
 
 export const date = new Date();
 export const dummyId = new ObjectId(date.getTime() / 1000);

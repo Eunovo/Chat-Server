@@ -4,6 +4,8 @@ import http from "http";
 import socketio, { Socket } from "socket.io";
 import redis from "socket.io-redis";
 
+import controller from './event_controllers';
+
 dotenv.config();
 
 const app = express();
@@ -21,10 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 io.on("connection", function (client: Socket) {
     console.log(`User, id ${client.id} connected ` +
         `with address ${client.handshake.address}`);
-
-    client.on("PING", (data: string) => {
-        client.emit("PONG", data);
-    });
+    controller(client);
 });
 
 const server = httpServer.listen(port, function () {
