@@ -64,7 +64,14 @@ describe('WebSocket Event test', () => {
                 wsClient.close();
                 expect.fail("Client should not be authenticated");
             });
-        })
+        });
+
+        xit('should reject non authenticated client', () => {});
+    });
+
+    describe('NEW_CHAT test', () => {
+        xit('should send new chat event to receipient and sender', 
+            () => {});
     });
 
 });
