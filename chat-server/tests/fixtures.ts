@@ -3,18 +3,29 @@ import { ObjectId } from "bson";
 import AuthService from "../src/services/auth_service";
 import Chat, { UserInfo, Receipient, Message } from "../src/data/chat";
 import ChatRepo from "../src/repos/chat_repo";
+import ChatService from "../src/services/chat_service";
 
 export const validToken = "valid_token";
 export const invalidToken = "invalid_token";
 
+let authCount = 0;
 export const authService: AuthService = {
     authenticate: (token: string) => {
+        const authUser = new UserInfo(`${authCount}`, 
+            `user-${authCount}`);
         if (token === validToken) {
-            return Promise.resolve(new UserInfo("1", "Novo"));
+            authCount += 1;
+            return Promise.resolve(authUser);
         } else if (token === invalidToken) {
             return Promise.reject(new Error("Invalid Token"));
         }
         return Promise.reject(new Error("Incorrect Token"));
+    }
+}
+
+export const chatService: any = {
+    addChat: (chat: Chat) => {
+        return chat;
     }
 }
 

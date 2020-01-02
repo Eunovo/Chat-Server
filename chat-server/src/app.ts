@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 io.on("connection", function (client: Socket) {
     console.log(`User, id ${client.id} connected ` +
         `with address ${client.handshake.address}`);
-    controller(client);
+    controller(io, client);
 });
 
 const server = httpServer.listen(port, function () {
