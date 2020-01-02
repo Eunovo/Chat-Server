@@ -3,8 +3,7 @@ import chaiAsPromised from "chai-as-promised";
 import mocha from "mocha";
 import mock from "mock-require";
 
-import Chat, { UserInfo, Receipient, Message } from "../../src/data/chat";
-import ChatService from "../../src/services/chat_service";
+import Chat from "../../src/data/chat";
 import ConstraintViolationError from "../../src/errors/contraint_violation_error";
 
 import { dummyId, sender, receipient, message, dummyChat } from '../fixtures';
