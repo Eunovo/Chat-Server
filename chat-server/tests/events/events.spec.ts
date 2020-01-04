@@ -89,7 +89,7 @@ describe('WebSocket Event test', () => {
         });
     });
 
-    describe('NEW_CHAT test', () => {
+    describe('CHAT Event test', () => {
         it('should send new chat event to receipient and sender',
             (done) => {
                 const senderClient = client(serverUrl);
@@ -123,6 +123,8 @@ describe('WebSocket Event test', () => {
                     });
                 });
             });
+        
+        it('should');
     });
 
 });

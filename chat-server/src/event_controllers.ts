@@ -4,6 +4,7 @@ import Chat, { Message, UserInfo, Receipient } from "./data/chat";
 import Response from "./models/response";
 import { authService, chatService } from "./services";
 import { userInfo } from "os";
+import ApiError from "./errors/api_error";
 
 const connectionMap = new Map<any, any>();
 
@@ -23,7 +24,7 @@ export default function (io: Server, client: Socket) {
                 Response.success(currentUserInfo, "Authenticated"));
         } catch (e) {
             client.emit("AUTHENTICATION_FAILED",
-                Response.error(e.message, 500));
+                Response.error(e.message));
         }
     });
 
@@ -48,7 +49,11 @@ export default function (io: Server, client: Socket) {
             io.to(recpConnId).emit("NEW_CHAT",
                 Response.success(savedChat, "New chat"));
         } catch (error) {
-            client.emit("CHAT_ERROR");
+            let errorResp = Response.error(error.message);
+            if (error instanceof ApiError) {
+                error = Response.error(error.message, error.getErrors());
+            }
+            client.emit("CHAT_ERROR", errorResp);
         }
     });
 

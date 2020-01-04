@@ -5,20 +5,18 @@ export default class Response {
     static success(data: any, message: string) {
         return  {
             status: this.success,
-            code: 200,
             message,
             data,
             errors: []
         };
     }
 
-    static error(message: string, code: number) {
+    static error(message: string, errors?: any[]) {
         return {
             status: this.error,
-            code,
             message,
             data: null,
-            errors: [],
+            errors: errors || [],
         }
     }
 }
