@@ -63,10 +63,30 @@ describe('WebSocket Event test', () => {
             wsClient.on('AUTHENTICATED', () => {
                 wsClient.close();
                 expect.fail("Client should not be authenticated");
+                done();
             });
         });
 
-        xit('should reject non authenticated client', () => { });
+        it('should reject non authenticated client', (done) => { 
+            const wsClient = client(serverUrl);
+
+            wsClient.on('connection', () => console.log('Client connected'));
+            wsClient.emit('NEW_CHAT');
+            wsClient.on('AUTHENTICATION_REQUIRED', (reponse) => {
+                wsClient.close();
+                done(); 
+            })
+            wsClient.on('CHAT_SUCCESS', () => {
+                expect.fail("Request should be rejected");
+                wsClient.close();
+                done();
+            });
+            wsClient.on('CHAT_ERROR', () => {
+                expect.fail("Request should be rejected");
+                wsClient.close();
+                done();
+            });
+        });
     });
 
     describe('NEW_CHAT test', () => {
@@ -88,7 +108,7 @@ describe('WebSocket Event test', () => {
                     senderClient.emit('NEW_CHAT', {
                         receipient: response.data, ...data
                     });
-                    senderClient.on('NEW_CHAT', (response) => {
+                    senderClient.on('CHAT_SUCCESS', (response) => {
                         expect(response.data).
                             to.equal(data.timestamp.toISOString());
                         senderClient.close();

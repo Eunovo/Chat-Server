@@ -1,13 +1,14 @@
-import { Socket, Server } from "socket.io";
+import { Socket, Server, Packet } from "socket.io";
 
 import Chat, { Message, UserInfo, Receipient } from "./data/chat";
 import Response from "./models/response";
 import { authService, chatService } from "./services";
+import { userInfo } from "os";
 
 const connectionMap = new Map<any, any>();
 
 export default function (io: Server, client: Socket) {
-    let currentUserInfo:UserInfo = null;
+    let currentUserInfo: UserInfo = null;
 
     client.on("PING", (data: string) => {
         client.emit("PONG", data);
@@ -18,26 +19,37 @@ export default function (io: Server, client: Socket) {
         try {
             currentUserInfo = await authService.authenticate(token);
             connectionMap.set(currentUserInfo.id, client.id);
-            client.emit("AUTHENTICATED", 
+            client.emit("AUTHENTICATED",
                 Response.success(currentUserInfo, "Authenticated"));
         } catch (e) {
-            client.emit("AUTHENTICATION_FAILED", 
+            client.emit("AUTHENTICATION_FAILED",
                 Response.error(e.message, 500));
         }
     });
 
+    client.use((packet: Packet, next: any) => {
+        if (userInfo) {
+            next();
+        }
+        client.emit('AUTHENTICATION_REQUIRED');
+    });
+
     client.on("NEW_CHAT", async (data: any) => {
-        let { receipient, message, timestamp } = data;
-        let savedChat = await chatService.addChat(new Chat(
-            null, currentUserInfo, 
-            new Receipient("single", receipient), 
-            new Message("text", message), 
-            new Date(timestamp)));
-        client.emit("NEW_CHAT", 
-            Response.success(savedChat.timestamp, "Lastest chat processed"));
-        let recpConnId = connectionMap.get(receipient.id);
-        io.to(recpConnId).emit("NEW_CHAT", 
-            Response.success(savedChat, "New chat"));
+        try {
+            let { receipient, message, timestamp } = data;
+            let savedChat = await chatService.addChat(new Chat(
+                null, currentUserInfo,
+                new Receipient("single", receipient),
+                new Message("text", message),
+                new Date(timestamp)));
+            client.emit("CHAT_SUCCESS",
+                Response.success(savedChat.timestamp, "Lastest chat processed"));
+            let recpConnId = connectionMap.get(receipient.id);
+            io.to(recpConnId).emit("NEW_CHAT",
+                Response.success(savedChat, "New chat"));
+        } catch (error) {
+            client.emit("CHAT_ERROR");
+        }
     });
 
     client.on("disconnect", () => {
