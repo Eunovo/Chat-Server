@@ -1,6 +1,7 @@
 import { Socket, Server } from "socket.io";
 
 import Chat, { Message, UserInfo, Receipient } from "./data/chat";
+import Response from "./models/response";
 import { authService, chatService } from "./services";
 
 const connectionMap = new Map<any, any>();
@@ -17,9 +18,11 @@ export default function (io: Server, client: Socket) {
         try {
             currentUserInfo = await authService.authenticate(token);
             connectionMap.set(currentUserInfo.id, client.id);
-            client.emit("AUTHENTICATED", currentUserInfo);
+            client.emit("AUTHENTICATED", 
+                Response.success(currentUserInfo, "Authenticated"));
         } catch (e) {
-            client.emit("AUTHENTICATION_FAILED", e.message);
+            client.emit("AUTHENTICATION_FAILED", 
+                Response.error(e.message, 500));
         }
     });
 
@@ -30,9 +33,11 @@ export default function (io: Server, client: Socket) {
             new Receipient("single", receipient), 
             new Message("text", message), 
             new Date(timestamp)));
-        client.emit("NEW_CHAT", savedChat.timestamp);
+        client.emit("NEW_CHAT", 
+            Response.success(savedChat.timestamp, "Lastest chat processed"));
         let recpConnId = connectionMap.get(receipient.id);
-        io.to(recpConnId).emit("NEW_CHAT", savedChat);
+        io.to(recpConnId).emit("NEW_CHAT", 
+            Response.success(savedChat, "New chat"));
     });
 
     client.on("disconnect", () => {
