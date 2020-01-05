@@ -14,7 +14,6 @@ const serverUrl = `http://localhost:${port}`;
 describe('Endpoints', () => {
 
     after((done) => {
-        console.log("called");
         server.close((err) => {
             if (err) {
                 console.log(err);
