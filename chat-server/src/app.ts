@@ -4,11 +4,17 @@ import http from "http";
 import socketio, { Socket } from "socket.io";
 import redis from "socket.io-redis";
 
-import controller from './event_controllers';
+import controller from './controllers/event_controller';
+import router from './routes';
+import { authMiddleware } from "./helpers/express-utils";
 
 dotenv.config();
 
 const app = express();
+app.use(express.json());
+app.use(authMiddleware);
+router(app);
+
 const redisHost = process.env.REDIS_HOST || "localhost";
 const redisPort = parseInt(process.env.REDIS_PORT || '6379');
 export const port = process.env.PORT || 3000;
