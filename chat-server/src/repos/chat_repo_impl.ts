@@ -28,23 +28,27 @@ export default class MongooseChatRepo implements ChatRepo {
             }
             throw e;
         }
-    }    
+    }
 
-    async getFromTo(fromId?: Object, toId?: Object): Promise<Chat[]> {
+    async getFromTo(fromId?: Object, toId?: Object, fromTime?: Date): Promise<Chat[]> {
         let query = {};
-        if (fromId && toId) {
+        if (fromId) {
             query = {
                 ...query,
-                "sender.id": fromId,
-                "receipient.data.id": toId  
+                "sender.id": fromId
             };
-        } else if (fromId) {
+        }
+        if (toId) {
             query = {
                 ...query,
-                "sender.id": fromId    
-            };
-        } else if (toId) {
-            query = { ...query,  "receipient.data.id": toId }
+                "receipient.data.id": toId
+            }
+        }
+        if (fromTime) {
+            query = {
+                ...query,
+                "timestamp": { $gt: fromTime }
+            }
         }
         let results = await this.model.find(query)
         return results.map(this.convertIChatToChat);
@@ -53,7 +57,7 @@ export default class MongooseChatRepo implements ChatRepo {
     convertIChatToChat(ichat: IChat): Chat {
         let { _id, sender, receipient, message, timestamp } = ichat;
         let createdAt = new ObjectId(_id).getTimestamp();
-        let chat = new Chat(_id, sender, receipient, 
+        let chat = new Chat(_id, sender, receipient,
             message, timestamp);
         chat.createdAt = createdAt;
         return chat;

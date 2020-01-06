@@ -15,13 +15,24 @@ const expect = chai.expect;
 const should = chai.should();
 
 const conversation = [
-    { sender, receipient, message, date, hash: "a" },
-    { sender: receipient.data, 
-        receipient: new Receipient("single", sender), 
-        message, date, hash: "b" },
-    { sender, receipient: new Receipient("single", 
-        new UserInfo("100", "Zee")), 
-        message, date, hash: "c" },
+    {
+        sender, receipient, message,
+        timestamp: date, hash: "a"
+    },
+    {
+        sender: receipient.data,
+        receipient: new Receipient("single", sender),
+        message,
+        timestamp: new Date(date.getTime() + 1000),
+        hash: "b"
+    },
+    {
+        sender, receipient: new Receipient("single",
+            new UserInfo("100", "Zee")),
+        message,
+        timestamp: new Date(date.getTime() + 2000),
+        hash: "c"
+    },
 ];
 
 describe("Repo Test", () => {
@@ -47,10 +58,10 @@ describe("Repo Test", () => {
 
     it("should reject duplicate chats", async () => {
         await chatRepo.save(new Chat(
-                null, sender, receipient, message, date
+            null, sender, receipient, message, date
         ));
         let savePromise = chatRepo.save(new Chat(
-                null, sender, receipient, message, date
+            null, sender, receipient, message, date
         ));
         savePromise.should.be.rejectedWith(IllegalInputError);
     });
@@ -75,9 +86,21 @@ describe("Repo Test", () => {
         await ChatModel.insertMany(conversation);
         let results = await chatRepo.getFromTo(
             sender.id, receipient.data.id);
-            expect(results.length).to.equal(1);
-            expect(results[0].sender.id).to.equal(sender.id);
-            expect(results[0].receipient.data.id)
-                .to.equal(receipient.data.id);
+        expect(results.length).to.equal(1);
+        expect(results[0].sender.id).to.equal(sender.id);
+        expect(results[0].receipient.data.id)
+            .to.equal(receipient.data.id);
     });
+
+    it("should get chats after a specified timestamp",
+        async () => {
+            await ChatModel.insertMany(conversation);
+            let results = await chatRepo.getFromTo(
+                null, null, date);
+            expect(results.length).to.equal(2);
+            expect(results).to.have.nested
+                .property('[0].timestamp').to.greaterThan(date);
+            expect(results).to.have.nested
+                .property('[1].timestamp').to.greaterThan(date);
+        });
 });

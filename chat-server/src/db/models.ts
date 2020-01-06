@@ -32,7 +32,7 @@ export const ChatSchema = new mongoose.Schema({
 });
 
 ChatSchema.pre("save", function (next) {
-    let { sender, receipient, message, timestamp } = this as any;
+    let { sender, receipient, message, timestamp } = this as IChat;
     let hash = JSON.stringify({ sender, receipient, message, timestamp });
     hash = crypto.createHash('sha1').update(hash).digest('hex');
     (this as IChat).hash = hash;
