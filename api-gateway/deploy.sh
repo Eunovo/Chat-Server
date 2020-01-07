@@ -2,7 +2,7 @@
 
 echo Building Docker Image
 tag="chat-app/api-gateway"
-docker build -t $tag .
+docker build -t $tag . --rm
 echo Docker Image built with tag $tag
 
 deployment="api-gateway-deployment"

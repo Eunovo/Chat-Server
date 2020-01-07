@@ -6,7 +6,7 @@ echo Build Completed
 
 echo Building Docker Image
 tag="chat-app/auth-service"
-docker build -t $tag .
+docker build -t $tag . --rm
 echo Docker Image built with tag $tag
 
 deployment="auth-service-deployment"
