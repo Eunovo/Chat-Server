@@ -1,5 +1,6 @@
 import httpstatus from "http-status-codes";
 
+import ApiError from "../errors/api_error";
 import Response from "../models/response";
 import { authService } from "../services";
 import { RequestEntity } from "../models/http";
@@ -45,3 +46,15 @@ export const authMiddleware = async (req: Request, res, next) => {
         forbid();
     }
 };
+
+export const errorHandler = async (err, req, res, next) => {
+    if (err instanceof SyntaxError) {
+        res.status(httpstatus.BAD_REQUEST)
+            .json(Response.error("Invalid JSON", []));
+    } else if (err instanceof ApiError ) {
+        res.status(err.status)
+            .json(Response.error(err.message, err.getErrors()));
+    } else {
+        next(err);
+    }
+}
