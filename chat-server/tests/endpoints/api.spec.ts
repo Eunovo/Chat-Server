@@ -6,7 +6,10 @@ import mocha from "mocha";
 chai.use(chaiHttp);
 chai.should();
 
-import { validToken, invalidToken } from "../fixtures";
+import {
+    date, lastSeenChats,
+    validToken, invalidToken
+} from "../fixtures";
 
 const apiPrefix = "/api/v1";
 export default (server: any) => {
@@ -56,14 +59,16 @@ export default (server: any) => {
         });
 
         describe("Chat API", () => {
-            xit('should get latest chats', (done) => {
-                const lastSeen = new Date();
-
+            it('should get latest chats', (done) => {
+                const lastSeen = date;
                 chai.request(server)
                     .get(apiPrefix + `/latest/${lastSeen}`)
                     .set('Authorization', `bearer ${validToken}`)
                     .end((err, res) => {
+                        console.log(res.body);
                         res.should.have.status(HttpStatus.OK);
+                        res.body.data.should.have
+                            .property('length', lastSeenChats.length);
                         done();
                     });
             });

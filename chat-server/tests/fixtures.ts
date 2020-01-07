@@ -3,10 +3,10 @@ import { ObjectId } from "bson";
 import AuthService from "../src/services/auth_service";
 import Chat, { UserInfo, Receipient, Message } from "../src/data/chat";
 import ChatRepo from "../src/repos/chat_repo";
-import ChatService from "../src/services/chat_service";
 
 export const validToken = "valid_token";
 export const invalidToken = "invalid_token";
+export const lastSeenChats = [];
 
 let authCount = 0;
 export const authService: AuthService = {
@@ -26,6 +26,13 @@ export const authService: AuthService = {
 export const chatService: any = {
     addChat: (chat: Chat) => {
         return chat;
+    },
+    getChatsTo: (id: Object, fromTime?: Date) => {
+        if (id && fromTime) {
+            if (date.toString() === fromTime.toString()) {
+                return lastSeenChats;
+            }
+        }
     }
 }
 

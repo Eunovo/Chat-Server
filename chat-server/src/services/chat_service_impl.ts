@@ -14,8 +14,8 @@ export default class ChatServiceImpl implements ChatService {
     getChatsFrom(id: Object): Promise<Chat[]> {
         return chatRepo.getFromTo(id);
     }
-    getChatsTo(id: Object): Promise<Chat[]> {
-        return chatRepo.getFromTo(undefined, id);
+    getChatsTo(id: Object, fromTime?: Date): Promise<Chat[]> {
+        return chatRepo.getFromTo(undefined, id, fromTime);
     }
     getChatsFromTo(fromId: Object, toId: Object): Promise<Chat[]> {
         return chatRepo.getFromTo(fromId, toId);

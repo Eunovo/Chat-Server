@@ -1,11 +1,21 @@
+import ApiResponse from '../models/response';
+import { ResponseEntity } from '../models/http';
 import { chatService } from '../services';
 
 class ChatController {
 
-    getLatestChats(req: any): Promise<any> {
-        let { lastSeen } = req.query;
-
-        return Promise.resolve(null);
+    async getLatestChats(req: any):
+        Promise<ResponseEntity<any>> {
+        let { params, user } = req;
+        let lastSeen = new Date(params.lastSeen);
+        let results = await chatService
+            .getChatsTo(user.id, lastSeen);
+        let responseBody = ApiResponse.success(
+            results, "Latest Chats");
+        return {
+            statusCode: 200,
+            body: responseBody
+        }
     }
 
 }
