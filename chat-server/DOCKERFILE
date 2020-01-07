@@ -5,9 +5,9 @@ RUN npm ci --only=production
 COPY ./dist/src ./src
 ENV NODE_ENV production
 ENV PORT 8080
-ENV AUTH_SERVICE_URL redis.chat-app.svc.cluster.local
+ENV AUTH_SERVICE_URL http://chat-auth.chat-app.svc.cluster.local
 ENV DB_URL mongoose://mongodb.chat-app.svc.cluster.local:27017/ChatServer
-ENV REDIS_HOST 
+ENV REDIS_HOST redis.chat-app.svc.cluster.local
 ENV REDIS_PORT 6379
 EXPOSE $PORT
 CMD ["node", "src/app.js"]
