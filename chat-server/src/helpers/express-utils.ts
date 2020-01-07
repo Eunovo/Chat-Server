@@ -36,7 +36,7 @@ export const authMiddleware = async (req: Request, res, next) => {
     if (tokens[0].toLowerCase() === "bearer") {
         try {
             let user = await authService.authenticate(tokens[1]);
-            res['user'] = user;
+            req['user'] = user;
             next();
         } catch (err) {
             forbid();
