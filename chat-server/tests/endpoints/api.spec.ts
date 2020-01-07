@@ -65,7 +65,6 @@ export default (server: any) => {
                     .get(apiPrefix + `/latest/${lastSeen}`)
                     .set('Authorization', `bearer ${validToken}`)
                     .end((err, res) => {
-                        console.log(res.body);
                         res.should.have.status(HttpStatus.OK);
                         res.body.data.should.have
                             .property('length', lastSeenChats.length);
