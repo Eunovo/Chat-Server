@@ -8,13 +8,16 @@ import ApiResponse from './models/response';
 import controller from './controllers/event_controller';
 import router from './routes';
 import { authMiddleware, errorHandler } from "./helpers/express-utils";
+import { logRequest, logError } from "./helpers/logger";
 
 dotenv.config();
 
 const app = express();
+app.use(logRequest);
 app.use(express.json());
 app.use(authMiddleware);
 router(app);
+app.use(logError);
 app.use(errorHandler);
 app.use((err, req, res, next) => {
     res.status(500)
