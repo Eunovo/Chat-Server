@@ -60,7 +60,7 @@ export default (server: any) => {
 
         describe("Chat API", () => {
             it('should get latest chats', (done) => {
-                const lastSeen = date;
+                const lastSeen = date.toUTCString();
                 chai.request(server)
                     .get(apiPrefix + `/latest/${lastSeen}`)
                     .set('Authorization', `bearer ${validToken}`)
