@@ -10,10 +10,8 @@ module.exports.makeRouter = (key, value) => {
                 method,
                 data: req.body,
                 responseType: req.accepts(['json']),
-                headers: {
-                    'Authorisation': req.get('authorisation') || ''
-                }
-            };
+                headers: req.headers
+            };   
             let response = await axios.request(newRequest);
             let responseMessage = "";
             if (response) {
