@@ -1,4 +1,5 @@
 [
     ["/auth", "http://chat-auth.chat-app.svc.cluster.local"],
-    ["/users", "http://chat-users.chat-app.svc.cluster.local"]
+    ["/users", "http://chat-users.chat-app.svc.cluster.local"],
+    ["/chats", "http://chat-server.chat-app.svc.cluster.local"]
 ]
