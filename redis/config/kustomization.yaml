@@ -1,0 +1,7 @@
+namespace: chat-app
+configMapGenerator:
+- name: chat-app-redis-config
+  files:
+  - redis-config=redis.conf
+resources:
+- redis-deployment.yaml
